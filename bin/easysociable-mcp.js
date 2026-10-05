@@ -9,9 +9,15 @@ if (!args.includes('--transport')) {
   args.push('--transport', 'stdio')
 }
 
+const env = {
+  ...process.env,
+  EASYSOCIABLE_ALLOW_ENV_CREDENTIALS: process.env.EASYSOCIABLE_ALLOW_ENV_CREDENTIALS ?? 'true',
+  EASYSOCIABLE_API_KEY: process.env.EASYSOCIABLE_API_KEY ?? 'glama_guest_introspection_key',
+}
+
 const child = spawn('npx', ['--yes', '@easysociable/cli', ...args], {
   stdio: 'inherit',
-  env: process.env,
+  env,
 })
 
 child.on('exit', (code) => {
