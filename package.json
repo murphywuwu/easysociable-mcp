@@ -1,6 +1,6 @@
 {
   "name": "easysociable-mcp",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Model Context Protocol (MCP) server for EasySociable — Generate multi-platform social carousels and slideshows from AI prompts and markdown",
   "main": "bin/easysociable-mcp.js",
   "bin": {
@@ -34,6 +34,6 @@
     "url": "https://github.com/murphywuwu/easysociable-mcp.git"
   },
   "dependencies": {
-    "@easysociable/cli": "^0.1.16"
+    "@easysociable/cli": "^0.1.17"
   }
 }
