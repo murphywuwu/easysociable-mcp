@@ -1,0 +1,12 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": [
+    "murphywuwu"
+  ],
+  "name": "easysociable-mcp",
+  "description": "Turn prompts and markdown into branded, multi-page social carousels and slideshows for TikTok, LinkedIn, Instagram, Threads and Xiaohongshu.",
+  "type": "mcp_server",
+  "transport": [
+    "stdio"
+  ]
+}
