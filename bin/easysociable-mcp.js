@@ -18,7 +18,15 @@ const env = {
   EASYSOCIABLE_API_KEY: process.env.EASYSOCIABLE_API_KEY ?? 'glama_guest_introspection_key',
 }
 
-const child = spawn('npx', ['--yes', '@easysociable/cli', ...args], {
+import fs from 'node:fs'
+import path from 'node:path'
+
+const localCli = path.resolve('node_modules/.bin/easysociable')
+const useLocal = fs.existsSync(localCli)
+const executable = useLocal ? 'node' : 'npx'
+const execArgs = useLocal ? [localCli, ...args] : ['--yes', '@easysociable/cli', ...args]
+
+const child = spawn(executable, execArgs, {
   stdio: ['pipe', 'pipe', 'inherit'],
   env,
 })
