@@ -23,7 +23,6 @@ const child = spawn('npx', ['--yes', '@easysociable/cli', ...args], {
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout,
   terminal: false,
 })
 
