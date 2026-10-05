@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process'
+import readline from 'node:readline'
 
 const rawArgs = process.argv.slice(2)
 const filteredArgs = rawArgs.filter(arg => arg !== 'mcp' && arg !== 'serve')
@@ -16,8 +17,36 @@ const env = {
 }
 
 const child = spawn('npx', ['--yes', '@easysociable/cli', ...args], {
-  stdio: 'inherit',
+  stdio: ['pipe', 'inherit', 'inherit'],
   env,
+})
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false,
+})
+
+rl.on('line', (line) => {
+  const trimmed = line.trim()
+  if (!trimmed) return
+
+  try {
+    const msg = JSON.parse(trimmed)
+    if (msg.method === 'ping') {
+      const response = JSON.stringify({
+        jsonrpc: '2.0',
+        id: msg.id,
+        result: {},
+      })
+      process.stdout.write(response + '\n')
+      return
+    }
+  } catch {
+    // If not valid JSON, simply forward
+  }
+
+  child.stdin.write(line + '\n')
 })
 
 child.on('exit', (code) => {
