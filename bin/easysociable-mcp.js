@@ -2,7 +2,9 @@
 
 import { spawn } from 'node:child_process'
 
-const args = ['mcp', 'serve', ...process.argv.slice(2)]
+const rawArgs = process.argv.slice(2)
+const filteredArgs = rawArgs.filter(arg => arg !== 'mcp' && arg !== 'serve')
+const args = ['mcp', 'serve', ...filteredArgs]
 if (!args.includes('--transport')) {
   args.push('--transport', 'stdio')
 }
