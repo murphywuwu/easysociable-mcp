@@ -46,6 +46,19 @@ const child = spawn(executable, execArgs, {
   env,
 })
 
+// Keep track of pending request IDs to know which method failed if -32601 occurs
+const pendingMethods = new Map()
+
+function getEmptyResultForMethod(method) {
+  if (!method) return {}
+  if (method === 'resources/list') return { resources: [] }
+  if (method === 'resources/templates/list') return { resourceTemplates: [] }
+  if (method === 'prompts/list') return { prompts: [] }
+  if (method === 'tools/list') return { tools: [] }
+  if (method === 'completion/complete') return { completion: { values: [] } }
+  return {}
+}
+
 // Handle child process stdout
 const childRl = readline.createInterface({
   input: child.stdout,
@@ -58,16 +71,21 @@ childRl.on('line', (line) => {
 
   try {
     const msg = JSON.parse(trimmed)
-    // If child process ever returns -32601 Method not found, intercept and resolve cleanly with empty result
-    if (msg.error && msg.error.code === -32601) {
-      console.error('[easysociable-mcp wrapper] Overriding child -32601 Method not found for id:', msg.id)
-      const override = JSON.stringify({
-        jsonrpc: '2.0',
-        id: msg.id,
-        result: {},
-      })
-      process.stdout.write(override + '\n')
-      return
+    if (msg.id !== undefined) {
+      const method = pendingMethods.get(msg.id)
+      pendingMethods.delete(msg.id)
+
+      // If child process returns -32601 Method not found, intercept and resolve cleanly with schema-compliant empty result
+      if (msg.error && msg.error.code === -32601) {
+        console.error(`[easysociable-mcp wrapper] Overriding child -32601 Method not found for id: ${msg.id} (method: ${method})`)
+        const override = JSON.stringify({
+          jsonrpc: '2.0',
+          id: msg.id,
+          result: getEmptyResultForMethod(method),
+        })
+        process.stdout.write(override + '\n')
+        return
+      }
     }
   } catch {
     // If not valid JSON, simply forward
@@ -88,6 +106,7 @@ rl.on('line', (line) => {
 
   try {
     const msg = JSON.parse(trimmed)
+
     if (msg.method === 'ping' || msg.method === '$/ping') {
       console.error('[easysociable-mcp wrapper] Intercepted ping request for id:', msg.id)
       const response = JSON.stringify({
@@ -97,6 +116,32 @@ rl.on('line', (line) => {
       })
       process.stdout.write(response + '\n')
       return
+    }
+
+    if (msg.method === 'resources/list') {
+      console.error('[easysociable-mcp wrapper] Intercepted resources/list request for id:', msg.id)
+      const response = JSON.stringify({
+        jsonrpc: '2.0',
+        id: msg.id,
+        result: { resources: [] },
+      })
+      process.stdout.write(response + '\n')
+      return
+    }
+
+    if (msg.method === 'prompts/list') {
+      console.error('[easysociable-mcp wrapper] Intercepted prompts/list request for id:', msg.id)
+      const response = JSON.stringify({
+        jsonrpc: '2.0',
+        id: msg.id,
+        result: { prompts: [] },
+      })
+      process.stdout.write(response + '\n')
+      return
+    }
+
+    if (msg.id !== undefined && msg.method) {
+      pendingMethods.set(msg.id, msg.method)
     }
   } catch {
     // If not valid JSON, simply forward
