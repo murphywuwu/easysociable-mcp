@@ -2,6 +2,9 @@
 
 import { spawn } from 'node:child_process'
 import readline from 'node:readline'
+import fs from 'node:fs'
+import path from 'node:path'
+import { createRequire } from 'node:module'
 
 console.error('[easysociable-mcp wrapper] Starting stdio MCP server proxy...')
 
@@ -18,13 +21,25 @@ const env = {
   EASYSOCIABLE_API_KEY: process.env.EASYSOCIABLE_API_KEY ?? 'glama_guest_introspection_key',
 }
 
-import fs from 'node:fs'
-import path from 'node:path'
+// Find actual JS entrypoint (not bash shim in .bin)
+const require = createRequire(import.meta.url)
+let cliJs = ''
+try {
+  const pkgPath = require.resolve('@easysociable/cli/package.json')
+  const candidate = path.join(path.dirname(pkgPath), 'bin', 'easysociable.js')
+  if (fs.existsSync(candidate)) {
+    cliJs = candidate
+  }
+} catch {
+  const fallback = path.resolve('node_modules/@easysociable/cli/bin/easysociable.js')
+  if (fs.existsSync(fallback)) {
+    cliJs = fallback
+  }
+}
 
-const localCli = path.resolve('node_modules/.bin/easysociable')
-const useLocal = fs.existsSync(localCli)
-const executable = useLocal ? 'node' : 'npx'
-const execArgs = useLocal ? [localCli, ...args] : ['--yes', '@easysociable/cli', ...args]
+const executable = cliJs ? 'node' : 'npx'
+const execArgs = cliJs ? [cliJs, ...args] : ['--yes', '@easysociable/cli', ...args]
+console.error('[easysociable-mcp wrapper] Spawning:', executable, execArgs[0])
 
 const child = spawn(executable, execArgs, {
   stdio: ['pipe', 'pipe', 'inherit'],
