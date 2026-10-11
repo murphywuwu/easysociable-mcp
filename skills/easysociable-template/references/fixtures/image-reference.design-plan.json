@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "design_plan_v2_1",
+  "sourceKind": "image_reference",
+  "intent": {
+    "jobToBeDone": "Rebuild soft-card landing convert poster from reference",
+    "primaryPlatform": "instagram",
+    "canvas": { "width": 1080, "height": 1350 }
+  },
+  "philosophy": {
+    "movementName": "Soft Ledger",
+    "space": "Stacked rounded cards with generous outer margin",
+    "color": "Warm cream canvas, dark ink, soft peach accents",
+    "rhythm": "Even card gaps; one tip band; bottom CTA",
+    "composition": "Title → dual soft cards with figures → tip → CTA",
+    "typographyAccent": "Bold title; quieter body in cards",
+    "craftBar": "Match reference geometry; image slots for figures; no CSS fake people"
+  },
+  "concepts": [
+    {
+      "id": "soft-ledger-rebuild",
+      "name": "Soft ledger rebuild",
+      "rationale": "Reference already fixes composition",
+      "philosophyExpression": "Same stack and figure wells as referenceSpec",
+      "visualMotif": "soft rounded cards",
+      "layout": "title, two cards, tip, cta",
+      "hierarchy": "title > card copy > tip > cta",
+      "typography": "bold title, medium body",
+      "colorStrategy": "cream + ink from reference",
+      "assetStrategy": "two image slots for person illustrations",
+      "risks": ["figure crops"]
+    }
+  ],
+  "selectedConceptId": "soft-ledger-rebuild",
+  "selectionReason": "Single reconstruction of the supplied reference",
+  "referenceSpec": {
+    "stackOrder": ["title", "soft-card-1", "soft-card-2", "tip", "cta"],
+    "margins": "~48px outer",
+    "gaps": "~24px between cards",
+    "radii": "cards 16px; figure wells 12px",
+    "typeScale": "title ~42/bold; body ~22; tip ~18"
+  },
+  "referenceImageInventory": [
+    {
+      "label": "Left soft-card person illustration",
+      "slotKey": "image_0",
+      "imageRole": "hero",
+      "boxApprox": "left mid ~280×320"
+    },
+    {
+      "label": "Right soft-card person illustration",
+      "slotKey": "image_1",
+      "imageRole": "hero",
+      "boxApprox": "right mid ~280×320"
+    }
+  ],
+  "assetPlan": [
+    {
+      "role": "hero",
+      "source": "user_upload",
+      "required": true,
+      "slotKey": "image_0",
+      "description": "Left soft-card person illustration — empty image-slot frame",
+      "treatment": "Match reference box; placeholder until account imageId fill"
+    },
+    {
+      "role": "hero",
+      "source": "user_upload",
+      "required": true,
+      "slotKey": "image_1",
+      "description": "Right soft-card person illustration — empty image-slot frame",
+      "treatment": "Match reference box; placeholder until account imageId fill"
+    }
+  ]
+}

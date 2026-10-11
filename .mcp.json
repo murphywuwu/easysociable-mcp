@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "easysociable": {
+      "command": "npx",
+      "args": ["-y", "@easysociable/cli", "mcp", "serve", "--transport", "stdio"]
+    }
+  }
+}

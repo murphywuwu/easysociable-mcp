@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "theme_presets_v1",
+  "presets": [
+    {
+      "id": "ocean-depths",
+      "name": "Ocean Depths",
+      "brandHex": "#1A6B6B",
+      "mode": "light",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Finance, consulting, trust-building metric cards",
+      "notFor": "High-energy nightlife or neon gaming creatives"
+    },
+    {
+      "id": "sunset-boulevard",
+      "name": "Sunset Boulevard",
+      "brandHex": "#E85D04",
+      "mode": "light",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Launch, lifestyle, warm creator promos",
+      "notFor": "Conservative financial disclosures"
+    },
+    {
+      "id": "forest-canopy",
+      "name": "Forest Canopy",
+      "brandHex": "#2D6A4F",
+      "mode": "light",
+      "fonts": { "heading": "Georgia", "body": "Inter" },
+      "bestFor": "Sustainability, outdoor, grounded reports",
+      "notFor": "Ultra-minimal grayscale product UI"
+    },
+    {
+      "id": "modern-minimalist",
+      "name": "Modern Minimalist",
+      "brandHex": "#475569",
+      "mode": "light",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Architecture, product UI shots, clean SaaS",
+      "notFor": "Maximalist sticker-led creator posts"
+    },
+    {
+      "id": "golden-hour",
+      "name": "Golden Hour",
+      "brandHex": "#B45309",
+      "mode": "light",
+      "fonts": { "heading": "Playfair Display", "body": "Source Sans 3" },
+      "bestFor": "Premium, autumnal, milestone celebrate",
+      "notFor": "Cold clinical healthcare dashboards"
+    },
+    {
+      "id": "arctic-frost",
+      "name": "Arctic Frost",
+      "brandHex": "#0284C7",
+      "mode": "light",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Winter campaigns, crisp tech, health",
+      "notFor": "Warm rustic food storytelling"
+    },
+    {
+      "id": "desert-rose",
+      "name": "Desert Rose",
+      "brandHex": "#C45C6A",
+      "mode": "light",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Soft beauty, hospitality, gentle social proof",
+      "notFor": "Hard-edge industrial or terminal aesthetics"
+    },
+    {
+      "id": "tech-innovation",
+      "name": "Tech Innovation",
+      "brandHex": "#2563EB",
+      "mode": "dark",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Startups, AI updates, product launches",
+      "notFor": "Warm editorial paper / folio looks"
+    },
+    {
+      "id": "botanical-garden",
+      "name": "Botanical Garden",
+      "brandHex": "#16A34A",
+      "mode": "light",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Growth metrics, wellness, organic brands",
+      "notFor": "Luxury black-tie or neon nightlife"
+    },
+    {
+      "id": "midnight-galaxy",
+      "name": "Midnight Galaxy",
+      "brandHex": "#7C3AED",
+      "mode": "dark",
+      "fonts": { "heading": "Inter", "body": "Inter" },
+      "bestFor": "Entertainment, gaming, bold night creatives",
+      "notFor": "Corporate earnings or government reports"
+    }
+  ]
+}

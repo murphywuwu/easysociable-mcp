@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "design_plan_v2_1",
+  "sourceKind": "text_brief",
+  "intent": {
+    "jobToBeDone": "Fixture for SURFACE_REVIEW validation",
+    "primaryPlatform": "x",
+    "canvas": { "width": 1200, "height": 675 }
+  },
+  "philosophy": {
+    "movementName": "Quiet Proof",
+    "space": "Wide margins",
+    "color": "Soft wash under dark ink",
+    "rhythm": "Sparse rules",
+    "composition": "One metric focal",
+    "typographyAccent": "Large metric",
+    "craftBar": "One focal; refine before decoration"
+  },
+  "concepts": [
+    {
+      "id": "a",
+      "name": "A",
+      "rationale": "Primary",
+      "philosophyExpression": "Metric left; wash behind",
+      "visualMotif": "wash",
+      "layout": "metric left",
+      "hierarchy": "metric > title",
+      "typography": "display metric",
+      "colorStrategy": "soft gradient under ink",
+      "assetStrategy": "gradient wash",
+      "risks": []
+    },
+    {
+      "id": "b",
+      "name": "B",
+      "rationale": "Alt",
+      "philosophyExpression": "Centered metric on flat",
+      "visualMotif": "flat",
+      "layout": "centered",
+      "hierarchy": "metric > title",
+      "typography": "display metric",
+      "colorStrategy": "flat canvas",
+      "assetStrategy": "none",
+      "risks": []
+    }
+  ],
+  "selectedConceptId": "a",
+  "selectionReason": "Needs atmosphere",
+  "themePreview": {
+    "name": "Ocean Depths",
+    "brandHex": "#1A6B6B",
+    "activeMode": "light",
+    "contrastPass": true,
+    "themeTokensPath": "theme-tokens.json",
+    "userConfirmed": true
+  },
+  "surfacePreview": {
+    "kind": "gradient",
+    "userConfirmed": true,
+    "recipeId": "grad_001_warm-flame",
+    "name": "Warm Flame",
+    "provider": "webgradients",
+    "textSafeZone": "light_end",
+    "contrastAnchor": "#FAD0C4",
+    "placement": "full_bleed"
+  },
+  "assetPlan": [
+    {
+      "role": "background",
+      "source": "gradient_catalog",
+      "required": false,
+      "description": "Warm Flame wash"
+    }
+  ]
+}

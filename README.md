@@ -64,28 +64,50 @@ easysociable mcp serve --transport stdio
 
 ## Available MCP Tools
 
-| Tool | Description |
+36 tools, grouped by what the agent works on:
+
+| Group | Tools |
 |---|---|
-| `slideshows_create` | Creates a durable Slideshow Run from structured slide content or `content-pack.v1`, returning an interactive Studio review URL. |
-| `formulas_list` | Lists validated viral carousel formulas filtered by niche, recipe, and platform. |
-| `formulas_get` | Retrieves the exact narrative beat blueprint (`Hook → Point → Reason → CTA`) and prompt guidance for a specific formula. |
-| `templates_list` | Retrieves available multi-platform layout templates for specific aspect ratios. |
+| **Slideshow Runs** | `create_slideshow_run`, `get_slideshow_run`, `list_slideshow_runs`, `update_slideshow_run`, `archive_slideshow_run`, `restore_slideshow_run`, `delete_slideshow_run` |
+| **Brands** | `create_brand`, `get_brand`, `list_brands`, `update_brand`, `archive_brand`, `restore_brand`, `delete_brand` |
+| **Templates** | `list_templates`, `get_template` |
+| **Template authoring** | `create_template_draft`, `get_template_draft`, `list_template_drafts`, `update_template_draft`, `delete_template_draft`, `publish_template_draft`, `create_template_preview_job`, `import_template_image` |
+| **Images** | `import_image`, `get_image`, `list_images`, `update_image`, `attest_image`, `archive_image`, `restore_image`, `delete_image` |
+| **Design assets** | `search_icons`, `get_icon`, `list_gradients`, `get_gradient` |
+
+---
+
+## Agent Skills
+
+The [`skills/`](skills) folder holds the workflows the agent follows on top of the tools:
+
+| Skill | Purpose |
+|---|---|
+| [`easysociable-slideshow`](skills/easysociable-slideshow/SKILL.md) | Topic → proven hook → structure → editable carousel, returned as a Studio link |
+| [`easysociable-template`](skills/easysociable-template/SKILL.md) | Design and publish reusable page templates from a brief or an image |
+| [`easysociable-tweet-image`](skills/easysociable-tweet-image/SKILL.md) | Turn X posts into one PNG each |
+| [`easysociable-content`](skills/easysociable-content/SKILL.md) | Pointer to the local [Content Engine](https://github.com/murphywuwu/content-engine) |
+
+Install skills + MCP in one go with `easysociable install --yes`, or as a Claude Code plugin:
+
+```
+/plugin marketplace add murphywuwu/easysociable-mcp
+/plugin install easysociable@easysociable
+```
 
 ---
 
 ## Example Agent Workflow
 
 When you ask your agent:
-> *"Create a 5-slide LinkedIn carousel about 4 Micro-SaaS pricing mistakes using the EasySociable productivity formula."*
+> *"Create a 5-slide LinkedIn carousel about 4 Micro-SaaS pricing mistakes with my Brand."*
 
 Your Agent will:
-1. Call `formulas_get` to retrieve the formula's narrative beat blueprint.
-2. Draft punchy copy structured as:
-   - Slide 1 (`hook`): Curiosity trigger
-   - Slides 2–4 (`point`): The 3 pricing mistakes
-   - Slide 5 (`cta`): Value recap & call to action
-3. Call `slideshows_create` to bind the copy into an active Slideshow Run.
-4. Return a private Studio link for you to preview and download the finished PNG pack.
+1. Call `list_brands` to load your saved Brand (name, handle, colors, fonts).
+2. Pick a proven hook and structure from the [Hook](https://easysociable.com/hooks) and [Formula](https://easysociable.com/formulas) catalogs, then draft the copy.
+3. Call `list_templates` to choose a layout for each page.
+4. Call `create_slideshow_run` to bind copy, layouts and Brand into a Slideshow Run.
+5. Return a private Studio link for you to polish and download the finished PNG pack.
 
 ---
 

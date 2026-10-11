@@ -1,0 +1,10 @@
+{
+  "name": "easysociable",
+  "description": "AI carousel maker that runs inside your coding agent: branded multi-page carousels for TikTok, Instagram and LinkedIn.",
+  "version": "0.1.18",
+  "author": { "name": "EasySociable", "url": "https://easysociable.com" },
+  "homepage": "https://easysociable.com",
+  "repository": "https://github.com/murphywuwu/easysociable-mcp",
+  "license": "MIT",
+  "keywords": ["carousel", "slideshow", "tiktok", "instagram", "linkedin", "mcp"]
+}

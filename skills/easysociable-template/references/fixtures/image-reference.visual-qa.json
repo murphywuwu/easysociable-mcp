@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "visual_qa_v2_1",
+  "draftId": "draft_fixture_ref",
+  "iteration": 0,
+  "sourceKind": "image_reference",
+  "screenshotEvidence": "/tmp/studio-render-fixture.png",
+  "referenceCompare": {
+    "performed": true,
+    "geometryMatch": true,
+    "imageSlotsMatchInventory": true,
+    "notes": "Fixture — stack and image_0/image_1 frames match referenceSpec"
+  },
+  "hardFailures": [],
+  "scores": {
+    "hierarchy": 18,
+    "composition": 14,
+    "spacingAlignment": 14,
+    "typography": 14,
+    "colorContrast": 9,
+    "assetRelevance": 9,
+    "contentResilience": 8,
+    "editability": 5
+  },
+  "total": 91,
+  "verdict": "pass",
+  "issues": [],
+  "changesMade": []
+}
