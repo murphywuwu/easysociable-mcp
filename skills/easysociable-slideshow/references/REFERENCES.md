@@ -9,7 +9,7 @@ no reference at all.
 Find references for a page role, shuffled, as short summaries:
 
 ```bash
-easysociable templates references --role hook,cover [--no-image] [--style <style>] [--exclude <familyIds>] --json
+easysociable templates references --role hook,cover [--style <style>] [--exclude <familyIds>] [--no-image] --json
 easysociable templates source --family <familyId> --json   # the design's Studio source
 ```
 
@@ -29,6 +29,13 @@ Roles overlap in the catalog, so pass related ones together: `hook,cover` ·
    `height` = lines × lineHeight + ~12% of fontSize for descenders.
 4. Remove what you do not need; add only elements copied from another reference
    with the same `style` (rule rows, a stat row).
+4a. **A reference's image area** when you have no image and the content does
+   not need a real one: keep the area's box and fill it from the content with a
+   large number or keyword, a short quote with an oversized quote mark, an
+   accent-colour block carrying one word, or one icon from
+   `easysociable icons search` on a tinted block. Never a grey placeholder or an
+   empty box on the cover. If nothing fits, delete the area and give the
+   headline its space.
 5. Brand chrome: the header label is the Brand name (or the topic when there is
    no Brand); the CTA names the Brand handle. Never leave a reference's original
    name or handle (e.g. "Will.AI.m") on a page. **Bind them** so a Brand change

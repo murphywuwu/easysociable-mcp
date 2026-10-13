@@ -106,14 +106,18 @@ Structure (step 3) and look are chosen separately. The look comes from a
    decoration). Drop any the previous Run used, take the least conventional
    one, and pick references whose `style` fits it.
 5. Otherwise → the content decides: get candidates for the cover with
-   `easysociable templates references --role hook,cover [--no-image] --json`
+   `easysociable templates references --role hook,cover --json`
    (results are shuffled) and take the first that fits the content. Its
    `style` is the deck's style; for each other page ask for that page's roles
    with `--style <style>`. A number → `metric,proof`; a list item →
    `point,value,steps`; a comparison → `compare`; a real product →
    `screenshot`. No match in that style → any style, keeping the cover's chrome.
 
-`--no-image` unless you have (or will leave a placeholder for) a real image.
+Don't filter out references that need an image just because you have none:
+most covers in the library have an image area. Use one and fill that area
+without a photo (references/REFERENCES.md, "A reference's image area"). Keep a
+placeholder only where the content needs a real screenshot or photo (step 5).
+`--no-image` is for when you specifically want designs drawn with type alone.
 Read each chosen design with `easysociable templates source --family <familyId> --json`
 and adapt it as in `references/REFERENCES.md` ("Adapting a reference" and
 "Avoid"). Put the result in the pack as a generated page:
