@@ -49,11 +49,33 @@ Ask only for what only the user knows:
   palette goes in `theme.json` (without a Brand or theme Studio falls back to
   its dark default).
 
-### 2. Facts
+### 2. Facts and evidence
 
 Research the topic from primary sources (official announcement, docs,
 reputable press). Keep a source URL for every fact. Drop claims you can only
 find in secondary blogs. Never invent numbers, dates, quotes or features.
+
+While you read those sources, collect **evidence images**: real pictures that
+can be a page's focal point (a product screenshot, a chart, a figure from the
+paper). Aim for 2–4 per Run, the cover first. A page built around a real image
+reads as proof and looks different from its neighbours; a text-only deck does
+neither.
+
+- Sources: only the topic's own primary sources — the product's site, docs,
+  blog, press kit or GitHub README; the paper itself (arXiv HTML has each
+  figure as its own file); openly licensed images (Wikimedia Commons, CC0/CC BY).
+  Never image search, stock sites, news-site photos, other creators' posts or
+  anything watermarked.
+- Take image URLs from pages you already opened (`og:image`, images in the
+  body) and download them: `curl -sL -o assets/<name>.png <url>`. PNG, JPEG or
+  WebP only (convert anything else to PNG), ≤ 20 MB.
+- **Look at every file** before keeping it. Drop it when it is off-topic,
+  unreadable at phone size, would need more than 1.25× upscaling to fill its
+  area, carries a watermark, or shows a recognisable person who is not the
+  subject.
+- Keep each kept image's source URL for the final message.
+- Found nothing usable → fine, step 5 handles it. Don't spend more than a few
+  fetches looking.
 
 When the user started from a Content Engine run, facts come from its knowledge
 pages instead (see `easysociable-content`).
@@ -110,8 +132,9 @@ Structure (step 3) and look are chosen separately. The look comes from a
    (results are shuffled) and take the first that fits the content. Its
    `style` is the deck's style; for each other page ask for that page's roles
    with `--style <style>`. A number → `metric,proof`; a list item →
-   `point,value,steps`; a comparison → `compare`; a real product →
-   `screenshot`. No match in that style → any style, keeping the cover's chrome.
+   `point,value,steps`; a comparison → `compare`; a page with an evidence
+   image (step 2) or a real product → `screenshot`. No match in that style →
+   any style, keeping the cover's chrome.
 
 Don't filter out references that need an image just because you have none:
 most covers in the library have an image area. Use one and fill that area
@@ -140,17 +163,26 @@ Say 'same as this'. Want another look? Say 'different look'."
   an AI-generated picture of a real product UI.
 - Concept / mood / background → generate one if this environment has an
   image-generation tool; otherwise leave the page text-only.
-- Images never contain text: all words stay in editable text layers.
-- **Every page whose content needs a real image you don't have gets a
-  placeholder slot** (as many pages as need one), never a text-only layout. Size it into the composition (usually the
-  lower half of the page) and label it with exactly what belongs there, e.g.
-  "Add: Grok Bot app screenshot". The user selects it in Studio and clicks
-  the upload button to replace it. Markup and SVG in `references/REFERENCES.md`
-  ("Image placeholder").
-- An image you do have: upload it
-  (`easysociable images upload --file body.json` with
-  `{ "file": "data:image/png;base64,…", "filename": "x.png" }`) and use the
-  returned `asset.url` as `src`.
+- Generated images never contain text: all words stay in editable text layers.
+  (A real screenshot or figure keeps its own text.)
+- Fill each image area in this order:
+  1. The user's own image, when they gave one.
+  2. An evidence image from step 2. Upload it
+     (`easysociable images upload --file body.json` with
+     `{ "file": "data:image/png;base64,…", "filename": "x.png" }`; build it with
+     `node -e "const f=process.argv[1],t=f.match(/\.(jpe?g|webp)$/i)?(/webp/i.test(f)?'webp':'jpeg'):'png';console.log(JSON.stringify({file:'data:image/'+t+';base64,'+require('fs').readFileSync(f,'base64'),filename:require('path').basename(f)}))" assets/x.png > body.json`)
+     and use the returned `asset.url` as `src`.
+     Crop and scale it (`objectFit: 'cover'`, `objectPosition`), never alter
+     what it shows. To point at something in it, add a separate element on top
+     (a red ellipse border, an underline bar) so the user can move or delete it.
+  3. Something only the user has (their app, their dashboard, their results)
+     → a **placeholder slot**, never a text-only layout. Size it into the
+     composition (usually the lower half of the page) and label it with
+     exactly what belongs there, e.g. "Add: Grok Bot app screenshot". The user
+     selects it in Studio and clicks the upload button to replace it. Markup
+     and SVG in `references/REFERENCES.md` ("Image placeholder").
+  4. Anything else → fill the area from the content or delete it
+     (`references/REFERENCES.md`, "A reference's image area").
 - List every placeholder in the final message ("page 2: app screenshot").
 
 ### 6. Check (hard gate)
@@ -176,8 +208,8 @@ easysociable slideshows create --file pack.json --brand-id <brandId> --json
 # no Brand: --theme theme.json instead of --brand-id
 ```
 
-Reply once with: the `studioUrl`, the arc in one line, the sources, and each
-image placeholder to replace (page + what to upload). Tell them to edit in
+Reply once with: the `studioUrl`, the arc in one line, the sources (facts and
+each evidence image: "p1 image: <url>"), and each image placeholder to replace (page + what to upload). Tell them to edit in
 Studio and click **Download** for the PNG ZIP.
 
 ### 8. Revise (same Run, never a copy)
@@ -244,7 +276,7 @@ Template steps:
    roles the new content has none of.
 4. Change only text inside `data-variable` elements and send matching
    `slots`. Too long → rewrite shorter; never resize boxes or move elements.
-   Every source image becomes a placeholder for the new topic (step 5);
+   Every source image is replaced for the new topic (step 5 order);
    Brand avatar/logo stay.
 5. Step 6 check, then create (step 7). In the reply, say in one line what
    differs from the source ("6 tips, so 6 point pages instead of 4") and that
