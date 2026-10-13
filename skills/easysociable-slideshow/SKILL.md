@@ -69,6 +69,10 @@ neither.
 - Take image URLs from pages you already opened (`og:image`, images in the
   body) and download them: `curl -sL -o assets/<name>.png <url>`. PNG, JPEG or
   WebP only (convert anything else to PNG), ≤ 20 MB.
+- Launch posts often show the product only in demo videos: download the video
+  and pull frames of the real UI (`ffmpeg -ss <seconds> -i demo.mp4 -frames:v 1
+  frame.png`), then crop to the phone or window. A frame where the key moment is
+  on screen (an approval prompt, a result) beats a generic screen.
 - **Look at every file** before keeping it. Drop it when it is off-topic,
   unreadable at phone size, would need more than 1.25× upscaling to fill its
   area, carries a watermark, or shows a recognisable person who is not the
