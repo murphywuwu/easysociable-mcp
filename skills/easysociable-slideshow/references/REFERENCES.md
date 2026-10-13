@@ -33,7 +33,7 @@ Roles overlap in the catalog, so pass related ones together: `hook,cover` ·
    not need a real one: keep the area's box and fill it from the content with a
    large number or keyword, a short quote with an oversized quote mark, an
    accent-colour block carrying one word, or one icon from
-   `easysociable icons search` on a tinted block. Never a grey placeholder or an
+   `easysociable icons search --query <word>` on a tinted block. Never a grey placeholder or an
    empty box on the cover. If nothing fits, delete the area and give the
    headline its space.
 5. Brand chrome: the header label is the Brand name (or the topic when there is

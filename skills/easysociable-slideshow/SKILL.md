@@ -21,6 +21,23 @@ Ask only for what only the user knows:
 - their Brand (IP name, handle, avatar) — once, ever;
 - their own material (screenshots, photos) when a page needs it.
 
+## Command output (`--json`)
+
+Read results from these paths; don't guess:
+
+| Command | Result |
+|---|---|
+| `auth status` | `authenticated`, `account.email` (no `data` wrapper) |
+| `brands list` / `brands get` | `data[]` / `data` (`id`, `name`, `handle`, `colors`, `logoUrl`) |
+| `hooks recommend` | `data.cards[]` (`id`, `hook_type`, `status`, `format`) |
+| `formulas recommend` | `data.cards[]` (`id`, `status`, `recipe`, `swipe`), `data.stop` |
+| `formulas get` | `data` (`beats[]`, `looks[].layouts`) |
+| `templates references` | a top-level array (`familyId`, `name`, `roles`, `style`, `requiresImage`) |
+| `templates source` | top level: `familyId`, `canvas`, `studioJson` |
+| `icons search --query <word>` | icon list for the word |
+| `images upload --path …` | `data[]` (`path`, `asset.url`, or `error`); exit 1 if any failed |
+| `slideshows create` | top level: `id`, `studioUrl` |
+
 ## Workflow
 
 ### 0. Login (once per session)
@@ -43,7 +60,7 @@ Ask only for what only the user knows:
   Create it with `easysociable brands create --file brand.json`
   (`{ "name", "handle", "colors", "logoAssetId" }`) using the default palette
   that matches the deck's style (`references/REFERENCES.md`). An avatar: upload
-  it first (step 5's `images upload`) and pass the returned `asset.id` as
+  it first (`images upload --path <file> --json`) and pass `data[0].asset.id` as
   `logoAssetId`; `brands get` then returns its `logoUrl`.
   Skipped → no Brand: header shows the topic, the CTA has no handle, and that
   palette goes in `theme.json` (without a Brand or theme Studio falls back to
@@ -69,9 +86,11 @@ neither.
 - Take image URLs from pages you already opened (`og:image`, images in the
   body) and download them: `curl -sL -o assets/<name>.png <url>`. PNG, JPEG or
   WebP only (convert anything else to PNG), ≤ 20 MB.
-- Launch posts often show the product only in demo videos: download the video
-  and pull frames of the real UI (`ffmpeg -ss <seconds> -i demo.mp4 -frames:v 1
-  frame.png`), then crop to the phone or window. A frame where the key moment is
+- Launch posts often show the product only in demo videos: pull frames of the
+  real UI straight from the video URL, without downloading the whole file
+  (`ffmpeg -ss <seconds> -i <video url> -frames:v 1 frame.png`; a contact sheet
+  to find the moment: `ffmpeg -i <video url> -vf "fps=1/3,scale=240:-1,tile=6x2"
+  -frames:v 1 sheet.jpg`), then crop to the phone or window. A frame where the key moment is
   on screen (an approval prompt, a result) beats a generic screen.
 - **Look at every file** before keeping it. Drop it when it is off-topic,
   unreadable at phone size, would need more than 1.25× upscaling to fill its
@@ -172,10 +191,8 @@ Say 'same as this'. Want another look? Say 'different look'."
 - Fill each image area in this order:
   1. The user's own image, when they gave one.
   2. An evidence image from step 2. Upload it
-     (`easysociable images upload --file body.json` with
-     `{ "file": "data:image/png;base64,…", "filename": "x.png" }`; build it with
-     `node -e "const f=process.argv[1],t=f.match(/\.(jpe?g|webp)$/i)?(/webp/i.test(f)?'webp':'jpeg'):'png';console.log(JSON.stringify({file:'data:image/'+t+';base64,'+require('fs').readFileSync(f,'base64'),filename:require('path').basename(f)}))" assets/x.png > body.json`)
-     and use the returned `asset.url` as `src`.
+     (all at once: `easysociable images upload --path assets/a.png assets/b.jpg --json`)
+     and use each returned `data[i].asset.url` as `src`.
      Crop and scale it (`objectFit: 'cover'`, `objectPosition`), never alter
      what it shows. To point at something in it, add a separate element on top
      (a red ellipse border, an underline bar) so the user can move or delete it.
