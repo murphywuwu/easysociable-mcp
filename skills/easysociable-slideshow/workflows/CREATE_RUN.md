@@ -1,7 +1,7 @@
 # Create Run
 
 Follow the Workflow in `SKILL.md` (login → Brand → facts → hook/structure →
-Deck Style pages → images → `scripts/check-pages.mjs` → create).
+look + pages from references → images → `scripts/check-pages.mjs` → create).
 
 Notes for updates:
 

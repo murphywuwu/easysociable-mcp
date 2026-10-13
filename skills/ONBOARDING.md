@@ -19,14 +19,13 @@ V1 expects an Agent (Grok Bot, Codex, Claude Code, …) to drive setup. The webs
 
    Default skills:
 
-   - `easysociable-slideshow` — turns a draft into slideshow pages you preview and download in the dashboard
-   - `easysociable-template` — creates page templates
+   - `easysociable-slideshow` — turns a topic into carousel pages you edit and download in Studio
 
    Optional Content Engine skill (install via CLI only — not in the public
    content-engine git repo; operations still follow that engine’s `CLAUDE.md`):
 
    ```bash
-   easysociable install --skills content,template,slideshow --yes
+   easysociable install --skills content,slideshow --yes
    ```
 
    Get a Content Engine core (preferred):

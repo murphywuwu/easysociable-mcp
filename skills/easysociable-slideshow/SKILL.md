@@ -3,8 +3,8 @@ name: easysociable-slideshow
 description: >
   Turn a topic into an editable, ready-to-post carousel (Slideshow Run) in
   EasySociable Studio. Research facts, pick a proven hook and structure
-  (Formula), adapt pages from one Deck Style's catalog layouts, render-check
-  every page locally, then create the Run and hand the user a Studio link.
+  (Formula), lay pages out from reference designs (the user's, a Formula's,
+  or the catalog's, shuffled), render-check every page locally, then create the Run and hand the user a Studio link.
   Ask the user only for what only they know (their Brand, once; their own
   images/screenshots). Final pixels come only from Studio Download.
 ---
@@ -40,12 +40,14 @@ Ask only for what only the user knows:
 - None → ask in **one** message, everything skippable:
   "What name and @handle should appear on your carousels? (Optional: an
   avatar/logo image path.) Reply 'skip' to post without a signature."
-  Create it with `easysociable brands create --file brand.json` using the
-  palette of the chosen Deck Style (`references/DECK_STYLES.md`).
-  Skipped → no Brand: header shows the topic, the CTA has no handle, and the
-  Deck Style palette goes in `theme.json` as
-  `{ "color": { "canvas", "text", "textMuted", "accent", "primary" } }`
-  (without a Brand or theme Studio falls back to its dark default).
+  Create it with `easysociable brands create --file brand.json`
+  (`{ "name", "handle", "colors", "logoAssetId" }`) using the default palette
+  that matches the deck's style (`references/REFERENCES.md`). An avatar: upload
+  it first (step 5's `images upload`) and pass the returned `asset.id` as
+  `logoAssetId`; `brands get` then returns its `logoUrl`.
+  Skipped → no Brand: header shows the topic, the CTA has no handle, and that
+  palette goes in `theme.json` (without a Brand or theme Studio falls back to
+  its dark default).
 
 ### 2. Facts
 
@@ -67,8 +69,12 @@ niche). Use a card when it fits; otherwise write your own. Never force one.
   `mistake-list`, a single piece of news or a claim → no list recipe.
 - `easysociable hooks recommend --json` → one mold per hook type (list-tease,
   contrast, number, identity, …), ranked by evidence.
-- `easysociable formulas recommend --recipe <recipe> --platform <p> --fact-count <n> --json`
-  when the shape is a recipe.
+- **Always** look for a structure first:
+  `easysociable formulas recommend [--recipe <recipe>] --platform <p> --fact-count <n> --json`
+  (`--recipe` when the shape is a list recipe; without it you see every
+  structure and judge fit yourself). Near-equal cards come back shuffled.
+  When the user asked for something different from last time, add
+  `--exclude <formulaId>` for the Formula that Run used.
 - Use a card only if `stop` is false **and** it fits this content (a news
   explainer is not an "N things" list). Prefer `published`; a `hypothesis`
   card is thin evidence: use it only when it clearly fits.
@@ -83,19 +89,34 @@ niche). Use a card when it fits; otherwise write your own. Never force one.
 - One idea per page, ≤ 45 words per page. Page 1 is the hook. Last page asks
   for one action (comment, save or follow).
 
-### 4. Style and pages
+### 4. Look and pages
 
-Pick one Deck Style (`references/DECK_STYLES.md`): the Brand's style if it has
-one, else by content. Styles that need images only when you have the images.
+Structure (step 3) and look are chosen separately. The look comes from a
+**reference**; the first rule that applies wins:
 
-For each page, take the family that fits its purpose and adapt its source:
+1. The user names a Run or says "same as last time / like this one" →
+   "Reuse a Run" below.
+2. The user shares a post (screenshot or link) → study its grid, type scale,
+   background, density and decoration; take the closest catalog references as
+   structure and restyle them to match the post. Never copy its words or images.
+3. A Formula with a Look → the Look's designs (Formula handoff below).
+4. The user asks for a different look ("换个样子", "something else") → first
+   write 3–5 art directions that differ from each other and from this Brand's
+   previous Run (one line each: grid, type treatment, background, density,
+   decoration). Drop any the previous Run used, take the least conventional
+   one, and pick references whose `style` fits it.
+5. Otherwise → the content decides: get candidates for the cover with
+   `easysociable templates references --role hook,cover [--no-image] --json`
+   (results are shuffled) and take the first that fits the content. Its
+   `style` is the deck's style; for each other page ask for that page's roles
+   with `--style <style>`. A number → `metric,proof`; a list item →
+   `point,value,steps`; a comparison → `compare`; a real product →
+   `screenshot`. No match in that style → any style, keeping the cover's chrome.
 
-```bash
-easysociable templates source --family <familyId> --platform <platform> --json
-```
-
-Follow "Adapting a family" in `DECK_STYLES.md`. Put the result in the pack as a
-generated page:
+`--no-image` unless you have (or will leave a placeholder for) a real image.
+Read each chosen design with `easysociable templates source --family <familyId> --json`
+and adapt it as in `references/REFERENCES.md` ("Adapting a reference" and
+"Avoid"). Put the result in the pack as a generated page:
 
 ```json
 { "role": "hook", "slots": { "text_0": "…", "text_1": "…" },
@@ -104,8 +125,10 @@ generated page:
 ```
 
 `slots` maps each `data-variable` to its plain text. Generated pages carry no
-`layoutFamilyId` / `pageTemplateId`. A Formula with a Look uses the Look's
-families as the sources instead of a Deck Style.
+`layoutFamilyId` / `pageTemplateId`.
+
+In the final message, add one line: "Want future carousels to look like this?
+Say 'same as this'. Want another look? Say 'different look'."
 
 ### 5. Images
 
@@ -118,7 +141,7 @@ families as the sources instead of a Deck Style.
   placeholder slot** (as many pages as need one), never a text-only layout. Size it into the composition (usually the
   lower half of the page) and label it with exactly what belongs there, e.g.
   "Add: Grok Bot app screenshot". The user selects it in Studio and clicks
-  the upload button to replace it. Markup and SVG in `DECK_STYLES.md`
+  the upload button to replace it. Markup and SVG in `references/REFERENCES.md`
   ("Image placeholder").
 - An image you do have: upload it
   (`easysociable images upload --file body.json` with
@@ -188,8 +211,40 @@ different topic, or when the user asks for an alternative version to compare.
 order and roles); `title_template` with `{X}` = the topic is the arc. Write copy
 from each `beat.fill` and your facts; never copy the formula's example posts.
 With `Look: L-…` (else the formula's first `looks` entry) the page source is
-`look.slides["<n>"]` or `look.layouts[beat.role]`: adapt that family exactly as
-in step 4. Then continue at step 5.
+`look.slides["<n>"]` or `look.layouts[beat.role]` (a design's `familyId`):
+read it with `templates source --family` and adapt it as in step 4. The Look
+wins over rule 5 of step 4 but not over a Run or post the user named.
+Then continue at step 5.
+
+## Reuse a Run (prompt names a `run_…` for a new topic)
+
+A new topic → a **new** Run; the source Run is never changed. Never ask which
+mode; decide from the words and the content:
+
+- **Template** — "using run_x as the template", "same as last time", "like
+  this one" (last time = the newest Run of this Brand, `slideshows list`).
+  Keep every page's look: only slot content changes.
+- **Style** — "in the style / feel / vibe of run_x", or Template was asked but
+  the new content does not fit its page roles (a "N tips" Run for an "A vs B"
+  topic). Take its colours, type treatment, chrome and spacing; lay pages out
+  fresh in step 4.
+
+Template steps:
+
+1. `easysociable slideshows get --id <runId> --json`. Its pages' `role`,
+   `layout` and `slots` are the source (they include the user's Studio edits).
+2. Write facts and the arc for the new topic (steps 2–3, no Formula search).
+3. Pages by role: one-off roles (hook, cta) copy that page's `layout`
+   verbatim; repeated roles (point, step) reuse the source page of that role
+   **as many times as the new content needs** (4 tips → 4 pages, 6 → 6). Drop
+   roles the new content has none of.
+4. Change only text inside `data-variable` elements and send matching
+   `slots`. Too long → rewrite shorter; never resize boxes or move elements.
+   Every source image becomes a placeholder for the new topic (step 5);
+   Brand avatar/logo stay.
+5. Step 6 check, then create (step 7). In the reply, say in one line what
+   differs from the source ("6 tips, so 6 point pages instead of 4") and that
+   the user can say "back to 4 pages" or "different layout".
 
 ## Rules
 
@@ -201,7 +256,7 @@ in step 4. Then continue at step 5.
 3. Revisions edit the same Run page by page (step 8): layout, text and images
    can all change. Page count and order are fixed for now (no add, delete,
    reorder) — if the user needs that, say so; create a new Run only when they agree.
-4. Free: up to 8 pages and 3 Downloads per month; paid: 20 pages, unmetered.
+4. Every plan: up to 20 pages. Free: 3 Downloads per month and 1 Brand; Creator: unlimited, 3 Brands; Studio: unlimited, 25 Brands. `BRAND_LIMIT_REACHED` → tell the user their plan's limit and the suggested action; never create a Run without the Brand silently.
 5. Identity: create with the user's own login, not `workspace_local` /
    `test-key` (unless they asked for `--allow-local-fixture`). Studio says
    "belongs to another account" → recreate with the current login.
@@ -220,6 +275,6 @@ in step 4. Then continue at step 5.
 
 ## Handoff boundary
 
-The Content Engine owns knowledge pages and Formula research. The Template
-skill owns authoring new catalog layouts. This skill turns a topic into a Run
+The Content Engine owns knowledge pages and Formula research. Reference
+designs are authored internally (Template skill); this skill only reads them. This skill turns a topic into a Run
 and opens Studio.

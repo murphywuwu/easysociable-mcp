@@ -16,7 +16,7 @@ Skip this workflow when `AUTHORING_FROM_IMAGE.md` applies and a reference image 
 
 ### 1. Gather intent (batch questions; skip known answers)
 
-- **Master** platform + canvas from `references/PLATFORM_SPECS.md`, plus default multi-platform derive targets (`MULTI_PLATFORM_FAMILY.md`) unless the user wants one platform only
+- Platform + canvas from `references/PLATFORM_SPECS.md` (one canvas: the source post's)
 - Page roles (1–2) + contentFamily / archetypes / density (`CATALOG_METADATA.md`)
 - Content job: what must the viewer understand in one glance?
 - Must-have slots: title / metric / image / CTA / fixed N checklist lines…
@@ -31,8 +31,7 @@ Use this structure (Chinese or English to match the user):
 
 ## 1. Job to be done
 - One-sentence purpose of this page
-- Master platform + canvas (preset + pixels) — cite PLATFORM_SPECS recommended row
-- Multi-platform targets (default vertical bucket unless user limited) — `MULTI_PLATFORM_FAMILY.md`
+- Platform + canvas (preset + pixels) — cite PLATFORM_SPECS recommended row
 
 ## 2. Visual constraints
 - Desired/forbidden moods or brand rules

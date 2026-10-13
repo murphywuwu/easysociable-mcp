@@ -1,9 +1,8 @@
 # ContentPack v1
 
-A page is either **generated** (`layout: { studioJson, canvas }` adapted from a
-Deck Style family — the default, see `DECK_STYLES.md`) or a **catalog page**
-(`layoutFamilyId` / `pageTemplateId`, used as-is; only for Formula Looks the
-user asked to copy exactly). `role` is a weak tag from the closed enum, not a
+A page is **generated**: `layout: { studioJson, canvas }` adapted from a
+reference design (see `REFERENCES.md`). Catalog pages (`layoutFamilyId` /
+`pageTemplateId`) are legacy; do not create new Runs with them. `role` is a weak tag from the closed enum, not a
 sequence position. `slots` are public values only. Do not add a
 `deck_template_id`, `bindingMap`, AST, ContentDocument, or product `arc` /
 `pageSequence`.

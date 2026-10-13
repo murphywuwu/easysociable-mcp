@@ -79,7 +79,7 @@ If unsure whether a region is “illustration” vs “icon”: prefer **image s
 9. Propose Theme reuse or `ThemeTokens` create from `theme-tokens.json` (`references/THEME_TOKENS.md`).
 10. Show the user: geometry summary, **image inventory → slot map**, selection metadata, Theme. Call out any region you could not match and why. Proceed when they accept.
 11. Run `scripts/validate-authoring-source.mjs <authoring-source.json>` and fix every error.
-12. Continue with `workflows/AUTHORING_STUDIO.md` (`source.kind = image_reference`, brief = path or short note) → **`MULTI_PLATFORM_FAMILY.md`** (derive + hand-tune other presets). Run Visual QA **including reference compare on the master** before handoff; still QA each derived variant for fit/clipping.
+12. Continue with `workflows/AUTHORING_STUDIO.md` (`source.kind = image_reference`, brief = path or short note) Run Visual QA **including reference compare** before handoff. One canvas only; after publish, bind it with `BIND_FORMULA_LOOK.md` when it comes from a Formula's post.
 
 ## Limits (state upfront when relevant)
 

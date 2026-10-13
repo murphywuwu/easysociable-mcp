@@ -120,20 +120,18 @@ No platform chrome assumptions. Still pick a concrete preset (`1:1`, `4:5`, `3:4
 
 ---
 
-## Layout Family (multi-platform create)
+## One canvas per reference
 
-Creating a template **defaults** to a Layout Family with one master page + derived presets — see `workflows/MULTI_PLATFORM_FAMILY.md`.
-
-Same-preset platforms share one variant tree (**Instagram + Threads → `4:5`**). Do not invent a second 4:5 page for Threads.
-
-Typical vertical bucket when master is `3:4` (Xiaohongshu): also derive `4:5`, `9:16`, `1:1`. Absolute layout cannot share one AST across those presets — hand-tune each variant after derive.
+A reference design has exactly one canvas: the source post's (a TikTok post → `9:16`).
+Never derive other presets; the slideshow agent re-lays a reference out for the
+Run's platform.
 
 ## Selection rules for Agents
 
-1. If user names one platform only → set master `platforms: [that]` + that platform’s **Recommended** row; skip family derive unless they later ask for more.  
-2. If user names several **or** does not limit platforms → pick a master Recommended canvas, then derive the default vertical targets (`MULTI_PLATFORM_FAMILY.md`).  
+1. Canvas = the source post's platform **Recommended** row (text brief with no post → TikTok 9:16).  
+2. One canvas only; no `families derive`.  
 3. Never mix presets across slides of one deck without an explicit user choice (IG/Threads/TikTok crop to first slide).  
-4. Each family variant’s P0 `selectionMetadata` must list only platforms that match that page’s `canvasPreset`.  
+4. P0 `selectionMetadata` lists only platforms that match the page's `canvasPreset`.  
 5. Specs above are **practical authoring targets** (2026 guides + Meta help for IG). Re-verify if a platform announces breaking crop changes.
 
 ## Sources (research snapshot)

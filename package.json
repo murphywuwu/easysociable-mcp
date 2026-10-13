@@ -34,6 +34,6 @@
     "url": "https://github.com/murphywuwu/easysociable-mcp.git"
   },
   "dependencies": {
-    "@easysociable/cli": "^0.1.18"
+    "@easysociable/cli": "^0.1.19"
   }
 }

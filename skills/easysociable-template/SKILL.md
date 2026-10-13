@@ -1,11 +1,11 @@
 ---
 name: easysociable-template
 description: >
-  Create single-page social image templates for EasySociable via the unified
-  Template MCP or `easysociable` CLI. Default create path is a Layout Family:
-  one master canvas plus derived multi-platform variants (e.g. XHS 3:4, IG/Threads 4:5,
-  TikTok 9:16, LinkedIn 1:1) with hand-tuned layouts per preset. Use when the user wants
-  to author a page template from a reference image or text brief, write a shared visual
+  Internal tool (opt-in install): turn a real post's page (reference image) or a
+  text brief into a single-canvas reference design for the slideshow skill's
+  reference library, then bind it to a Formula Look. One canvas only (the
+  source post's size, e.g. TikTok 9:16); no multi-platform variants. Use when the
+  maintainer wants to author a reference from a reference image or text brief, write a shared visual
   design philosophy, explore layout concepts, co-create Theme/preview tokens, pull icons
   via search_icons/get_icon, open Authoring Studio, or publish. Do not use for
   fill-slots hosted PNG jobs (`create_render_job` is retired), multi-slide slideshow
@@ -21,7 +21,7 @@ server. Do not install or invoke `easysociable-template`, `easysociable-slidesho
 
 **This skill owns template authoring:**
 
-1. **Author** templates as a **Layout Family** (master + multi-platform variants) → Studio + Publish (`workflows/MULTI_PLATFORM_FAMILY.md`).
+1. **Author** reference designs: **one canvas**, the source post's size → Studio + Publish, then bind to a Formula Look (`workflows/BIND_FORMULA_LOOK.md`). Other platforms are re-laid out by the slideshow agent at generation time, so never derive variants.
 2. Fill-slots Hosted Render (`create_render_job`) is **retired** as a paid delivery path. Customer PNG packs come from Slideshow Studio Download.
 
 It is a template factory. It is **not** a multi-slide slideshow compositor and it is **not** a PNG API.
@@ -41,9 +41,9 @@ Out of scope (hand off):
 2. Submit only public Gateway DTOs. Never invent or request private Safe AST / Binding Map / RenderPlan.
 3. Do not start Local Runtime, read content library SQLite, or call Content MCP/CLI for Template work.
 4. Catalog and create targets are **single-page** only. Never treat site Carousel packs as Agent templates.
-5. After `create` / `createDraft`, the primary authoring path is `authoringStudioUrl` (`/authoring/{draftId}`). **Default:** run `workflows/MULTI_PLATFORM_FAMILY.md` (derive + hand-tune variants) before handoff unless the user asked for one platform only. Always send the handoff in `AUTHORING_STUDIO.md` (edit → **Save** → tell Agent to publish). Do not require a Hosted Preview Job for interactive authoring.
+5. After `create` / `createDraft`, the primary authoring path is `authoringStudioUrl` (`/authoring/{draftId}`). One canvas only (never `families derive`). Always send the handoff in `AUTHORING_STUDIO.md` (edit → **Save** → tell Agent to publish). Do not require a Hosted Preview Job for interactive authoring.
 6. Studio has **Save only** — no Publish button. Publish only after the user saves and **explicitly** asks to publish; then run `workflows/PUBLISH_FROM_DRAFT.md`.
-7. **Do not Publish without complete P0 selection metadata** (`CATALOG_METADATA.md`). Gateway enforces this. Each family variant carries its own `platforms` / `canvasPreset` / `canvas`.
+7. **Do not Publish without complete P0 selection metadata** (`CATALOG_METADATA.md`). Gateway enforces this. What the slideshow agent filters on must be right: `supportedRoles`, `contentArchetypes`, `requiresImage`, `visualStyle`, `bestFor`.
 8. Theme/preview: co-create `ThemeTokens` on draft create (`theme.create`) → Family `preview_tokens` (ADR-0033). No authoring TemplateTheme row. Colors/fonts via semantic `--es-*` on page nodes.
 9. Layout model is **absolute positioning** on a **flat canvas tree** (see prior authoring rules / `AUTHORING_SOURCE.md`).
 10. **Runtime layout CSS:** put exact geometry in JSX inline `style={{...}}`. Never depend on Tailwind arbitrary-value classes for geometry.
@@ -76,12 +76,12 @@ easysociable auth status --json
 
 | User intent | Workflow |
 |---|---|
-| Text description → template (incl. multi-platform) | `DESIGN_BRIEF.md` → … → `AUTHORING_STUDIO.md` → **`MULTI_PLATFORM_FAMILY.md`** (derive + hand-tune) |
-| Reference image → template | `AUTHORING_FROM_IMAGE.md` → … → `AUTHORING_STUDIO.md` → **`MULTI_PLATFORM_FAMILY.md`** + reference-compare QA on master |
-| “只要某一个平台” | Same authoring path; skip derive / only named presets in `MULTI_PLATFORM_FAMILY.md` |
+| Text description → reference | `DESIGN_BRIEF.md` → … → `AUTHORING_STUDIO.md` → publish |
+| Reference image (a real post's page) → reference | `AUTHORING_FROM_IMAGE.md` → … → `AUTHORING_STUDIO.md` (reference-compare QA) → publish |
+| A viral post → its Formula's Look | each page via `AUTHORING_FROM_IMAGE.md` → publish → **`BIND_FORMULA_LOOK.md`** |
 | Need gradient / photo surface / icons only | `SURFACE_REVIEW.md` |
 | **Add / change an icon** (arrow, chevron, check, …) | **MUST** `SURFACE_REVIEW.md` § Icons — search → confirm → get_icon. **Do not** hand-draw SVG paths. |
-| Already have authoring payload / continue Studio | `workflows/AUTHORING_STUDIO.md` (+ family derive if variants still missing) |
+| Already have authoring payload / continue Studio | `workflows/AUTHORING_STUDIO.md` |
 | User says publish / 发布该模板 (after Save) | `workflows/PUBLISH_FROM_DRAFT.md` |
 | Browse published single-page templates | `list` / `get_template` + public metadata |
 | **Fill a published template → PNG/JPEG** | `workflows/FILL_AND_RENDER.md` |
@@ -89,14 +89,14 @@ easysociable auth status --json
 
 ## Core model
 
-- `workflows/MULTI_PLATFORM_FAMILY.md` — **default** multi-platform create (Family + derive + hand-tune)
+- `workflows/BIND_FORMULA_LOOK.md` — published references → a Formula's Look (role → design)
 - `references/PLATFORM_SPECS.md`
 - `references/CATALOG_METADATA.md`
 - `references/SLOTS.md` — public slot contract for fill-slots render
 - `references/AUTHORING_SOURCE.md`
 - `references/THEME_TOKENS.md` — Family `preview_tokens` (no TemplateTheme)
 - `references/EXTERNAL_RESOURCES.md`
-- `references/GATEWAY.md` — CLI / MCP including families derive + `render`
+- `references/GATEWAY.md` — CLI / MCP
 - `workflows/FILL_AND_RENDER.md` — get_template → slots → Hosted Render
 - Authoring V2.1 workflows + validators as before
 

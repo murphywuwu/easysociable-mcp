@@ -18,11 +18,11 @@ Complete intake first:
 ## Layout Family (multi-platform)
 
 New drafts create a **Layout Family** (`familyId`) plus a master canvas page.
-**Default create path:** after the master draft exists, follow `MULTI_PLATFORM_FAMILY.md` (derive + hand-tune variants) before handoff unless the user asked for one platform only.
+One canvas per reference: never derive platform variants.
 
 - Authoring URL: `/authoring/{draftId}?platform=…`. Top bar **platform chips** switch variants (do not resize one AST).
 - Preview skin = Family `preview_tokens` from `theme.create`; fill/render uses Brand snapshot first (ADR-0033).
-- Legacy drafts without `familyId` auto-wrap on `getDraft` / `listDrafts`. Bulk: `easysociable templates families migrate-legacy --json`.
+- Legacy drafts without `familyId` auto-wrap on `getDraft` / `listDrafts`.
 
 ## Flow
 
@@ -47,9 +47,9 @@ AST or Binding Maps.
 
 3. Read `data.id` / `data.templateId` / `data.familyId` / `data.authoringStudioUrl` (and `data.variants` when present).
 
-4. **Multi-platform (default):** run `workflows/MULTI_PLATFORM_FAMILY.md` — derive target presets, hand-tune each variant, QA each canvas. Skip only when the user asked for a single platform.
+4. One canvas only: do not run `families derive`.
 
-5. **Before handoff, run `workflows/VISUAL_QA.md`** on the master (and each variant from step 4). Open the actual Studio render; inspect screenshots, not only source. When a draft fails, fix authoring JSON, validate, update that page id, and re-render:
+5. **Before handoff, run `workflows/VISUAL_QA.md`** on the page. Open the actual Studio render; inspect screenshots, not only source. When a draft fails, fix authoring JSON, validate, update that page id, and re-render:
 
 ```bash
 node scripts/validate-authoring-source.mjs ./authoring-source.json

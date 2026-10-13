@@ -4,12 +4,12 @@ Primary intake when the user describes a single-page template in words (no refer
 
 ## Goal
 
-One publishable **single-page** template **Family** (master canvas + multi-platform variants by default): Design Brief → Design Philosophy → 2–3 Concepts → Asset Plan → Theme lock → master layout → Authoring Studio → `MULTI_PLATFORM_FAMILY.md`.
+One publishable **single-page, single-canvas** reference design: Design Brief → Design Philosophy → 2–3 Concepts → Asset Plan → Theme lock → layout → Authoring Studio → publish.
 
 ## Steps
 
-1. Confirm this is **one page**, not a slideshow. If they want a multi-slide deck, stop and hand off (`OUT_OF_SCOPE.md`). Multi-platform variants of the same page are expected — that is not a slideshow.
-2. Read `references/PLATFORM_SPECS.md`. Lock **master** platform + recommended canvas, and the default vertical derive targets unless the user limited platforms (`MULTI_PLATFORM_FAMILY.md`).
+1. Confirm this is **one page**, not a slideshow. If they want a multi-slide deck, stop and hand off (`OUT_OF_SCOPE.md`).
+2. Read `references/PLATFORM_SPECS.md`. Lock platform + recommended canvas (one canvas).
 3. **Mandatory — V2.1 design plan first** (no reference image):
    - Follow `workflows/DESIGN_BRIEF.md`
    - Follow `workflows/DESIGN_PHILOSOPHY.md`; lock shared `philosophy` (+ companion `design-philosophy.md`)
@@ -30,7 +30,7 @@ One publishable **single-page** template **Family** (master canvas + multi-platf
    - `authoringSource` per `references/AUTHORING_SOURCE.md` (flat tree + text-nesting exception)
    - Theme per `references/THEME_TOKENS.md` — use `themeTokens` from validated `theme-tokens.json` for `theme.create`
 5. Run `scripts/validate-authoring-source.mjs <authoring-source.json>` and fix every error.
-6. Continue with `workflows/AUTHORING_STUDIO.md` (`source.kind = text_brief`) → **`MULTI_PLATFORM_FAMILY.md`** (derive + hand-tune + QA each variant) before handoff.
+6. Continue with `workflows/AUTHORING_STUDIO.md` (`source.kind = text_brief`) → Visual QA before handoff.
 
 ## Checklist pages
 
