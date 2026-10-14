@@ -21,6 +21,8 @@ A Model Context Protocol (MCP) server that empowers AI agents (Claude Desktop, C
 
 ## Quickstart & Installation
 
+This server is listed in the [Official MCP Registry](https://registry.modelcontextprotocol.io).
+
 ### Option 1: Claude Desktop
 
 Add this configuration to your `claude_desktop_config.json`:
