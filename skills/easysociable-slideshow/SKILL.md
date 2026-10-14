@@ -5,8 +5,8 @@ description: >
   EasySociable Studio. Research facts, pick a proven hook and structure
   (Formula), lay pages out from reference designs (the user's, a Formula's,
   or the catalog's, shuffled), render-check every page locally, then create the Run and hand the user a Studio link.
-  Ask the user only for what only they know (their Brand, once; their own
-  images/screenshots). Final pixels come only from Studio Download.
+  Never block on a question: a missing Brand shows as a bound sample the user
+  fills once in Studio. Final pixels come only from Studio Download.
 ---
 
 # EasySociable Slideshow Skill
@@ -16,10 +16,11 @@ enough to post, where every word is still editable. The output is editable,
 so **a wrong guess is cheap and a question is expensive**: decide platform,
 page count, arc, style and copy yourself; the user fixes details in Studio.
 
-Ask only for what only the user knows:
+What only the user has never blocks the Run; it becomes a visible, replaceable
+stand-in they fill in Studio:
 
-- their Brand (IP name, handle, avatar) — once, ever;
-- their own material (screenshots, photos) when a page needs it.
+- their Brand (name, handle, avatar) → bound samples (step 1);
+- their own material (screenshots, photos) → image placeholders (step 5).
 
 ## Command output (`--json`)
 
@@ -49,22 +50,25 @@ Read results from these paths; don't guess:
 - `authenticated: true` → say once: "This Run will be created as
   `<account.email>` — open Studio with the same account."
 
-### 1. Brand (ask once, ever)
+### 1. Brand (never ask)
 
 `easysociable brands list --json`.
 
 - A Brand exists → use it (the most recently updated if several), silently.
-- None → ask in **one** message, everything skippable:
-  "What name and @handle should appear on your carousels? (Optional: an
-  avatar/logo image path.) Reply 'skip' to post without a signature."
-  Create it with `easysociable brands create --file brand.json`
-  (`{ "name", "handle", "colors", "logoAssetId" }`) using the default palette
-  that matches the deck's style (`references/REFERENCES.md`). An avatar: upload
-  it first (`images upload --path <file> --json`) and pass `data[0].asset.id` as
-  `logoAssetId`; `brands get` then returns its `logoUrl`.
-  Skipped → no Brand: header shows the topic, the CTA has no handle, and that
-  palette goes in `theme.json` (without a Brand or theme Studio falls back to
-  its dark default).
+  Its colours and fonts style the Run (`--brand-id` in step 7).
+- None, but the prompt gives a name / handle / avatar → create it:
+  `easysociable brands create --file brand.json`
+  (`{ "name", "handle", "colors", "logoAssetId" }`, colours = the deck style's
+  default palette in `references/REFERENCES.md`). An avatar: upload it first
+  (`images upload --path <file> --json`) and pass `data[0].asset.id` as
+  `logoAssetId`.
+- None and nothing given → no Brand, no question. The style's palette goes in
+  `theme.json`.
+
+Either way every Run carries the Brand spots (cover signature, CTA handle),
+bound with `data-brand`; whatever the Brand lacks shows the sample `Your Name`
+/ `@yourhandle` / sample avatar (`references/REFERENCES.md` rule 5). Studio
+asks the user for exactly those fields and updates every page when they fill them.
 
 ### 2. Facts and evidence
 
@@ -229,7 +233,11 @@ easysociable slideshows create --file pack.json --brand-id <brandId> --json
 # no Brand: --theme theme.json instead of --brand-id
 ```
 
-Reply once with: the `studioUrl`, the arc in one line, the sources (facts and
+Reply once with: the `studioUrl`, the arc in one line, any Brand sample
+left ("The name, handle and avatar on pages 1 and 6 are samples: fill them
+once in the bar at the top of Studio, or in Brands at
+https://my.easysociable.com/brands, and every page updates"; name only the
+fields that are samples), the sources (facts and
 each evidence image: "p1 image: <url>"), and each image placeholder to replace (page + what to upload). Tell them to edit in
 Studio and click **Download** for the PNG ZIP.
 

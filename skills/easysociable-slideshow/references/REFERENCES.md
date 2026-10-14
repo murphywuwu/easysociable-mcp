@@ -36,13 +36,23 @@ Roles overlap in the catalog, so pass related ones together: `hook,cover` ·
    `easysociable icons search --query <word>` on a tinted block. Never a grey placeholder or an
    empty box on the cover. If nothing fits, delete the area and give the
    headline its space.
-5. Brand chrome: the header label is the Brand name (or the topic when there is
-   no Brand); the CTA names the Brand handle. Never leave a reference's original
-   name or handle (e.g. "Will.AI.m") on a page. **Bind them** so a Brand change
-   updates every page: the element holding only the Brand name gets
-   `data-brand="name"`, only the handle `data-brand="handle"`, and an avatar /
-   logo `<img>` gets `data-brand="avatar"` with the Brand's `logoUrl` as `src`.
-   Without a Brand, leave them unbound (the topic is not the Brand).
+5. Brand chrome — every Run carries the Brand, bound so one Brand edit updates
+   every page. The cover has a signature (avatar + name + handle); the CTA has
+   avatar + handle next to the action. Inner pages keep only the Brand spots
+   their reference already has (never add chrome by habit). Never leave a
+   reference's original name or handle (e.g. "Will.AI.m") on a page.
+   - The element holding only the name gets `data-brand="name"`, only the
+     handle `data-brand="handle"`, the avatar / logo `<img>` `data-brand="avatar"`.
+   - Value: the Brand's `name`, `@handle`, `logoUrl`. A field the Brand lacks
+     (or no Brand at all) → the sample: `Your Name`, `@yourhandle`, and the
+     sample avatar below, still bound. Studio swaps each sample the moment the
+     user fills that field, and asks for it until then.
+   - Size the spots for a real name (up to ~22 characters) — `check-pages`
+     renders them with a long one.
+
+   Sample avatar (`objectFit: 'cover'`, round it with `borderRadius: '50%'`):
+   `data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxNjAnIGhlaWdodD0nMTYwJyB2aWV3Qm94PScwIDAgMTYwIDE2MCc+PHJlY3Qgd2lkdGg9JzE2MCcgaGVpZ2h0PScxNjAnIGZpbGw9JyNDOUNERDMnLz48Y2lyY2xlIGN4PSc4MCcgY3k9JzYyJyByPScyOCcgZmlsbD0nI0Y0RjVGNycvPjxwYXRoIGQ9J00yOCAxNjBjMi0zNCAyNC01MiA1Mi01MnM1MCAxOCA1MiA1MnonIGZpbGw9JyNGNEY1RjcnLz48L3N2Zz4=`
+
 6. Accent colour only on large text (≥ 36px, or ≥ 28px bold) and blocks. Small
    labels use the text or muted colour.
 7. Semantic `data-type` values (`title`, `subtitle`, `kicker`, `metric`,

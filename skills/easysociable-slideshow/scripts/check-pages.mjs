@@ -24,6 +24,8 @@ const brandRaw = themeFile ? JSON.parse(readFileSync(themeFile, 'utf8')) : null
 const brand = brandRaw?.data ?? brandRaw
 const c = brand?.colors ?? brand?.color ?? {}
 // Studio default theme (apps/easysociable/app/lib/themeTokens.ts DEFAULT_AUTHORING_THEME_TOKENS).
+// Brand spots render with the real Brand, or a long stand-in so a real name fits later.
+const BRAND = { name: brand?.name || 'Alexandra Montgomery', handle: brand?.handle ? `@${brand.handle.replace(/^@/, '')}` : '@alexandra.montgomery', avatar: brand?.logoUrl || null }
 const colors = { canvas: c.canvas ?? '#0f1419', text: c.text ?? '#e8eef5', muted: c.textMuted ?? c.muted ?? '#8b9bb0', accent: c.accent ?? '#5b8cff', primary: c.primary ?? c.accent ?? '#5b8cff' }
 
 const chrome = [process.env.CHROME_PATH,
@@ -57,6 +59,7 @@ for (const [i, src] of SOURCES.entries()) {
   const box = document.createElement('div')
   box.setAttribute('data-authoring-theme', '')
   box.innerHTML = toHtml(src.json)
+  for (const el of box.querySelectorAll('[data-brand]')) { const f = el.dataset.brand; if (f === 'avatar') { if (BRAND.avatar) el.src = BRAND.avatar } else if (BRAND[f]) el.textContent = BRAND[f] }
   if (GRID) { box.style.cssText = 'width:' + src.width * S + 'px;height:' + src.height * S + 'px;overflow:hidden'; box.firstElementChild.style.transform = 'scale(' + S + ')'; box.firstElementChild.style.transformOrigin = '0 0' }
   stage.appendChild(box)
 }
@@ -112,7 +115,7 @@ for (const page of pack.pages) if (!page.layout?.studioJson) console.log(`page $
 const COLS = 4
 const html = `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=block">
 <style>${themeCss}</style><div id="stage"></div><pre id="report"></pre>
-<script>const SOURCES = ${JSON.stringify(pages).replace(/</g, '\\u003c')}, COLS = ${COLS};${pageScript}</script>`
+<script>const SOURCES = ${JSON.stringify(pages).replace(/</g, '\\u003c')}, COLS = ${COLS}, BRAND = ${JSON.stringify(BRAND).replace(/</g, '\\u003c')};${pageScript}</script>`
 const file = join(outDir, 'pages.html')
 writeFileSync(file, html)
 const W = Math.max(...pages.map(p => p.width)), Hs = pages.map(p => p.height)
@@ -124,9 +127,13 @@ const rows = Math.ceil(pages.length / COLS)
 execFileSync(chrome, [...base, `--window-size=${Math.min(COLS, pages.length) * (W / 2 + 16) + 16},${rows * (Math.max(...Hs) / 2 + 16) + 16}`, `--screenshot=${join(outDir, 'grid.png')}`, pathToFileURL(file).href + '#grid'], { stdio: 'ignore' })
 const raw = dom.match(/<pre id="report">([\s\S]*?)<\/pre>/)?.[1]?.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
 const reports = raw ? JSON.parse(raw) : pages.map(() => ({ errors: ['no report (page script did not finish)'], warnings: [] }))
+// Every Run carries the Brand: a cover signature and a CTA handle (references/REFERENCES.md rule 5).
+const brandSpots = { 0: ['name', 'handle', 'avatar'], [pages.length - 1]: ['handle', 'avatar'] }
 let failed = false
 for (const [i, page] of pages.entries()) {
   const report = reports[i]
+  for (const f of (brandSpots[i] ?? []).filter(f => !page.json.includes(`data-brand="${f}"`)))
+    report.errors.push(`no Brand ${f}: the ${i ? 'last' : 'first'} page needs a data-brand="${f}" element`)
   if (report.errors.length) failed = true
   console.log(`page ${page.n} (${page.role}): ${report.errors.length ? 'FAIL' : 'ok'}`)
   for (const e of report.errors) console.log(`  ERROR ${e}`)
