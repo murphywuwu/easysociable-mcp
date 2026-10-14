@@ -5,13 +5,13 @@
   "description": "AI carousel maker for coding agents: branded multi-page carousels for TikTok, LinkedIn, Instagram.",
   "websiteUrl": "https://easysociable.com",
   "repository": { "url": "https://github.com/murphywuwu/easysociable-mcp", "source": "github" },
-  "version": "0.1.25",
+  "version": "0.1.27",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@easysociable/cli",
-      "version": "0.1.25",
+      "version": "0.1.27",
       "transport": { "type": "stdio" },
       "packageArguments": [
         { "type": "positional", "value": "mcp" },

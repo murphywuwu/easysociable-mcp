@@ -11,7 +11,7 @@ V1 expects an Agent (Grok Bot, Codex, Claude Code, …) to drive setup. The webs
    # or: npm i -g @easysociable/cli
    ```
 
-2. **Install Skills + MCP** (Template + Slideshow by default; for Codex / Claude Code)
+2. **Install Skills + MCP** (Slideshow by default; for Codex / Claude Code). The curl installer already does this; run it yourself after an npm install.
 
    ```bash
    easysociable install --yes

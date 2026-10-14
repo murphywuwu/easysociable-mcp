@@ -87,7 +87,6 @@ The [`skills/`](skills) folder holds the workflows the agent follows on top of t
 |---|---|
 | [`easysociable-slideshow`](skills/easysociable-slideshow/SKILL.md) | Topic → proven hook → structure → editable carousel, returned as a Studio link |
 | [`easysociable-template`](skills/easysociable-template/SKILL.md) | Design and publish reusable page templates from a brief or an image |
-| [`easysociable-tweet-image`](skills/easysociable-tweet-image/SKILL.md) | Turn X posts into one PNG each |
 | [`easysociable-content`](skills/easysociable-content/SKILL.md) | Pointer to the local [Content Engine](https://github.com/murphywuwu/content-engine) |
 
 Install skills + MCP in one go with `easysociable install --yes`, or as a Claude Code plugin:
