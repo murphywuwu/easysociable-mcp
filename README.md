@@ -105,7 +105,7 @@ When you ask your agent:
 
 Your Agent will:
 1. Call `list_brands` to load your saved Brand (name, handle, colors, fonts).
-2. Pick a proven hook and structure from the [Hook](https://easysociable.com/hooks) and [Formula](https://easysociable.com/formulas) catalogs, then draft the copy.
+2. Pick a proven structure from the [Formula](https://easysociable.com/formulas) catalog (page 1 is its opening hook), then draft the copy.
 3. Call `list_templates` to choose a layout for each page.
 4. Call `create_slideshow_run` to bind copy, layouts and Brand into a Slideshow Run.
 5. Return a private Studio link for you to polish and download the finished PNG pack.
@@ -128,7 +128,6 @@ Your Agent will:
 
 - **Website**: [https://easysociable.com](https://easysociable.com)
 - **Formula Catalog**: [https://easysociable.com/formulas](https://easysociable.com/formulas)
-- **Hook Catalog**: [https://easysociable.com/hooks](https://easysociable.com/hooks)
 - **LLM Specification**: [https://easysociable.com/llms.txt](https://easysociable.com/llms.txt)
 - **npm Package**: [@easysociable/cli](https://www.npmjs.com/package/@easysociable/cli)
 

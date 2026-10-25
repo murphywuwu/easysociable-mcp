@@ -29,13 +29,19 @@ Roles overlap in the catalog, so pass related ones together: `hook,cover` ·
    `height` = lines × lineHeight + ~12% of fontSize for descenders.
 4. Remove what you do not need; add only elements copied from another reference
    with the same `style` (rule rows, a stat row).
-4a. **A reference's image area** when you have no image and the content does
-   not need a real one: keep the area's box and fill it from the content with a
-   large number or keyword, a short quote with an oversized quote mark, an
-   accent-colour block carrying one word, or one icon from
-   `easysociable icons search --query <word>` on a tinted block. Never a grey placeholder or an
-   empty box on the cover. If nothing fits, delete the area and give the
-   headline its space.
+4a. **A reference's image area** when you have no real image: keep the area's
+   box and draw a diagram from the page's own words, every part editable text
+   or shapes:
+   - prompt card: the exact prompt the page tells the reader to send, in a
+     chat-bubble-like card with no product logo or UI chrome;
+   - A vs B: two cards side by side, a "vs" or arrow between;
+   - ✗ / ✓: the wrong and right version of the same thing;
+   - flow: 3–4 nodes with arrows for steps;
+   - a large number or keyword, a short quote with an oversized quote mark,
+     or an accent block carrying one word.
+   Icons: `easysociable icons search --query <word>`, then `icons get` for its
+   `canonicalSvg`. Made-up figures carry "示例 / example". Never an empty box. If
+   nothing fits, delete the area and give the headline its space.
 5. Brand chrome — every Run carries the Brand, bound so one Brand edit updates
    every page. The cover has a signature (avatar + name + handle); the CTA has
    avatar + handle next to the action. Inner pages keep only the Brand spots
@@ -86,29 +92,3 @@ Use one in `theme.json` as `{ "color": { "canvas", "text", "textMuted", "accent"
 | `dark` | `#06080C` / `#FFFFFF` / `#C7CBD3` / `#4C9BFF` |
 | `bold_promo` | `#F9F9F9` / `#0A0A0A` / `#555555` / `#0066DD` |
 
-## Image placeholder
-
-A replaceable image slot for a real screenshot or photo the user will add.
-Studio shows an upload button when it is selected.
-
-```jsx
-<img data-type="image" data-variable="image_0" data-image-mode="slot_default"
-  alt="Add: <what goes here>" src="data:image/svg+xml;base64,<SVG>"
-  style={{ position: 'absolute', left: 88, top: 760, width: 904, height: 388, objectFit: 'cover', borderRadius: 24 }} />
-```
-
-`<SVG>` is base64 of a grey box with an image icon and the label, sized to the slot:
-
-```xml
-<svg xmlns='http://www.w3.org/2000/svg' width='904' height='388' viewBox='0 0 904 388'>
-  <rect width='904' height='388' fill='#DDD6CC'/>
-  <g transform='translate(416,124)' fill='none' stroke='#8C8781' stroke-width='5' stroke-linejoin='round'>
-    <rect width='72' height='56' rx='8'/><path d='M6 50 L26 28 L40 42 L50 34 L66 50'/><circle cx='52' cy='16' r='6'/>
-  </g>
-  <text x='50%' y='230' text-anchor='middle' font-family='Inter, Arial, sans-serif' font-size='32' font-weight='600' fill='#6F6A64'>Add: Grok Bot app screenshot</text>
-</svg>
-```
-
-Put the same data URL in the page's `slots` under `image_N`. Number slots
-`image_0`, `image_1`, … per page. Use the style's own colours for the box
-(canvas-adjacent grey on light styles, `#1A1F27` on dark ones).
