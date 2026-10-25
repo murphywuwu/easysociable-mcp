@@ -2,8 +2,8 @@
 name: easysociable-slideshow
 description: >
   Turn a topic into an editable, ready-to-post carousel (Slideshow Run) in
-  EasySociable Studio. Research facts, pick a proven hook and structure
-  (Formula), lay pages out from reference designs (the user's, a Formula's,
+  EasySociable Studio. Research facts, pick a proven structure (Formula),
+  lay pages out from reference designs (the user's, a Formula's,
   or the catalog's, shuffled), render-check every page locally, then create the Run and hand the user a Studio link.
   Never block on a question: a missing Brand shows as a bound sample the user
   fills once in Studio. Final pixels come only from Studio Download.
@@ -15,12 +15,32 @@ The user gives a topic. You return a Studio link to a carousel that is good
 enough to post, where every word is still editable. The output is editable,
 so **a wrong guess is cheap and a question is expensive**: decide platform,
 page count, arc, style and copy yourself; the user fixes details in Studio.
+Approved copy is the exception: when it is supplied, it is final (below).
 
 What only the user has never blocks the Run; it becomes a visible, replaceable
 stand-in they fill in Studio:
 
 - their Brand (name, handle, avatar) → bound samples (step 1);
-- their own material (screenshots, photos) → image placeholders (step 5).
+- their own material (screenshots, photos, results) → a finished stand-in now,
+  and one "swap in yours" line in the final message (step 5).
+
+## User-supplied / approved copy (copy-lock)
+
+When the user or a Content Engine note supplies page-by-page copy (【逐页】, a
+script, "use this text", a `note.md` with locked copy), that text is **final**:
+
+- Place it verbatim, page for page. Never paraphrase, shorten, merge or reorder.
+- Skip your own hook/arc/CTA writing, the ≤ 45 words rule and "too long →
+  rewrite shorter". Overflow is a layout fix only: smaller type, more lines,
+  taller box.
+- `Pn 作用：…` lines are meta for you, never slide copy.
+- Allowed extra chrome only: page number, Brand name/handle, and labels that
+  appear in the note (第一步/第二步/第三步, STEP, 做什么, 为什么, 新手提醒,
+  适合谁, 资料去处). Empty unused template slots or remove the element rather
+  than inventing a label, title or slogan.
+- A line looks wrong against `source.md`? Keep it and list it under "Copy
+  concerns" in the final message; never rewrite it.
+- Gate: `scripts/check-copy.mjs` in step 6, `--copy-lock` in step 7.
 
 ## Command output (`--json`)
 
@@ -30,12 +50,12 @@ Read results from these paths; don't guess:
 |---|---|
 | `auth status` | `authenticated`, `account.email` (no `data` wrapper) |
 | `brands list` / `brands get` | `data[]` / `data` (`id`, `name`, `handle`, `colors`, `logoUrl`) |
-| `hooks recommend` | `data.cards[]` (`id`, `hook_type`, `status`, `format`) |
 | `formulas recommend` | `data.cards[]` (`id`, `status`, `recipe`, `swipe`), `data.stop` |
 | `formulas get` | `data` (`beats[]`, `looks[].layouts`) |
 | `templates references` | a top-level array (`familyId`, `name`, `roles`, `style`, `requiresImage`) |
 | `templates source` | top level: `familyId`, `canvas`, `studioJson` |
-| `icons search --query <word>` | icon list for the word |
+| `icons search --query <word>` | icon list for the word (ids, no SVG) |
+| `icons get --id <id> --idempotency-key <any-unique-string>` | `canonicalSvg` to inline |
 | `images upload --path …` | `data[]` (`path`, `asset.url`, or `error`); exit 1 if any failed |
 | `slideshows create` | top level: `id`, `studioUrl` |
 
@@ -75,9 +95,12 @@ asks the user for exactly those fields and updates every page when they fill the
 Research the topic from primary sources (official announcement, docs,
 reputable press). Keep a source URL for every fact. Drop claims you can only
 find in secondary blogs. Never invent numbers, dates, quotes or features.
+A first-person result ("I tested", "亲测", "it replied …") is a fact too: write
+it only when the user's material or a knowledge page records it. Otherwise
+write the step as an instruction ("send it this prompt"), not a report.
 
-While you read those sources, collect **evidence images**: real pictures that
-can be a page's focal point (a product screenshot, a chart, a figure from the
+**Evidence images** are their own search, whatever the facts came from: real
+pictures that can be a page's focal point (a product screenshot, a chart, a figure from the
 paper). Aim for 2–4 per Run, the cover first. A page built around a real image
 reads as proof and looks different from its neighbours; a text-only deck does
 neither.
@@ -87,8 +110,10 @@ neither.
   figure as its own file); openly licensed images (Wikimedia Commons, CC0/CC BY).
   Never image search, stock sites, news-site photos, other creators' posts or
   anything watermarked.
-- Take image URLs from pages you already opened (`og:image`, images in the
-  body) and download them: `curl -sL -o assets/<name>.png <url>`. PNG, JPEG or
+- Start from the subject itself: open its official site, docs or help pages,
+  launch post and launch video (a knowledge page's source links are a good
+  start). Take image URLs from those pages (`og:image`, images in the body)
+  and download them: `curl -sL -o assets/<name>.png <url>`. PNG, JPEG or
   WebP only (convert anything else to PNG), ≤ 20 MB.
 - Launch posts often show the product only in demo videos: pull frames of the
   real UI straight from the video URL, without downloading the whole file
@@ -101,23 +126,22 @@ neither.
   area, carries a watermark, or shows a recognisable person who is not the
   subject.
 - Keep each kept image's source URL for the final message.
-- Found nothing usable → fine, step 5 handles it. Don't spend more than a few
-  fetches looking.
+- Done when the official site, docs and launch post/video were checked.
+  Nothing usable → fine, step 5 still gives every page a finished image.
 
 When the user started from a Content Engine run, facts come from its knowledge
-pages instead (see `easysociable-content`).
+pages (see `easysociable-content`) and copy from the approved note's 【逐页】,
+verbatim (copy-lock, above); evidence images are still searched as above.
 
-### 3. Hook and structure
+### 3. Structure and hook
 
-Both catalogs are hosted cards distilled from real viral posts, with evidence
-pooled across niches (a hook or structure works by its mechanism, not its
-niche). Use a card when it fits; otherwise write your own. Never force one.
+Formulas are hosted cards distilled from real viral posts, with evidence
+pooled across niches (a structure works by its mechanism, not its niche).
+Use a card when it fits; otherwise write your own. Never force one.
 
 - Decide the content's **shape** from your facts: N tips → `tip-list`, a
   procedure → `steps`, a transformation → `before-after`, errors →
   `mistake-list`, a single piece of news or a claim → no list recipe.
-- `easysociable hooks recommend --json` → one mold per hook type (list-tease,
-  contrast, number, identity, …), ranked by evidence.
 - **Always** look for a structure first:
   `easysociable formulas recommend [--recipe <recipe>] --platform <p> --fact-count <n> --json`
   (`--recipe` when the shape is a list recipe; without it you see every
@@ -127,8 +151,8 @@ niche). Use a card when it fits; otherwise write your own. Never force one.
 - Use a card only if `stop` is false **and** it fits this content (a news
   explainer is not an "N things" list). Prefer `published`; a `hypothesis`
   card is thin evidence: use it only when it clearly fits.
-- Hook: fill the mold's `format` with the topic (never copy its example).
-  Formula: its `swipe` is the page order and each `beat.fill` guides the copy.
+- Formula: its `swipe` is the page order and each `beat.fill` guides the copy.
+  Page 1 is its `hook` beat: write the opening line from that beat's `fill`.
 - No fitting card → write the hook and arc yourself (`references/ARC.md`):
   draft 3 hooks of different types, keep the most specific one the carousel
   fully pays off.
@@ -136,7 +160,8 @@ niche). Use a card when it fits; otherwise write your own. Never force one.
   Instagram 4:5. Page count follows the argument (usually 6–9), within
   `references/PLATFORM_CAPS.md`.
 - One idea per page, ≤ 45 words per page. Page 1 is the hook. Last page asks
-  for one action (comment, save or follow).
+  for one action (comment, save or follow). Approved copy → skip this step's
+  copy writing; the note's pages are the arc (copy-lock).
 
 ### 4. Look and pages
 
@@ -165,8 +190,9 @@ Structure (step 3) and look are chosen separately. The look comes from a
 
 Don't filter out references that need an image just because you have none:
 most covers in the library have an image area. Use one and fill that area
-without a photo (references/REFERENCES.md, "A reference's image area"). Keep a
-placeholder only where the content needs a real screenshot or photo (step 5).
+without a photo (references/REFERENCES.md, "A reference's image area"). Decide
+each page's image (step 5) while you pick its reference: a diagram needs the
+image area, a large evidence image needs a large one.
 `--no-image` is for when you specifically want designs drawn with type alone.
 Read each chosen design with `easysociable templates source --family <familyId> --json`
 and adapt it as in `references/REFERENCES.md` ("Adapting a reference" and
@@ -189,10 +215,11 @@ Say 'same as this'. Want another look? Say 'different look'."
 - Real products, apps, people, data → real screenshots or photos only. Never
   an AI-generated picture of a real product UI.
 - Concept / mood / background → generate one if this environment has an
-  image-generation tool; otherwise leave the page text-only.
+  image-generation tool; otherwise a diagram (3 below).
 - Generated images never contain text: all words stay in editable text layers.
   (A real screenshot or figure keeps its own text.)
-- Fill each image area in this order:
+- Every image area ships finished: never a grey placeholder, never "add
+  later". Fill it with the first of these you can do:
   1. The user's own image, when they gave one.
   2. An evidence image from step 2. Upload it
      (all at once: `easysociable images upload --path assets/a.png assets/b.jpg --json`)
@@ -200,15 +227,19 @@ Say 'same as this'. Want another look? Say 'different look'."
      Crop and scale it (`objectFit: 'cover'`, `objectPosition`), never alter
      what it shows. To point at something in it, add a separate element on top
      (a red ellipse border, an underline bar) so the user can move or delete it.
-  3. Something only the user has (their app, their dashboard, their results)
-     → a **placeholder slot**, never a text-only layout. Size it into the
-     composition (usually the lower half of the page) and label it with
-     exactly what belongs there, e.g. "Add: Grok Bot app screenshot". The user
-     selects it in Studio and clicks the upload button to replace it. Markup
-     and SVG in `references/REFERENCES.md` ("Image placeholder").
-  4. Anything else → fill the area from the content or delete it
-     (`references/REFERENCES.md`, "A reference's image area").
-- List every placeholder in the final message ("page 2: app screenshot").
+     A screen you can capture yourself right now (a browser tool, no login,
+     no region block) counts too; never type a password or stop to ask.
+  3. A diagram drawn from the page's own words (references/REFERENCES.md,
+     "A reference's image area"): a prompt card for a tutorial step, A vs B
+     cards, ✗ / ✓, a 3–4 step flow, a big number. Always possible.
+- Never: a drawn imitation of a real product's UI, an invented AI reply or
+  screenshot, an invented number without "示例 / example" on it, an image from
+  someone else's post.
+- What only the user can add (their screenshot after logging in, their
+  dashboard, their results) is an upgrade, not a gap: list it at the end of
+  the final message, page by page, with how to get it and what the copy may
+  then say ("p2–4: log in to Doubao, send the prompt, screenshot the
+  correction; then the caption can say '亲测'").
 
 ### 6. Check (hard gate)
 
@@ -226,11 +257,42 @@ node <skill>/scripts/check-pages.mjs pack.json --out ./check --brand brand.json
   At most two fix rounds.
 - Exit 2 (no Chrome) → continue, and tell the user the visual check was skipped.
 
+Approved copy (copy-lock) → also run the fidelity gate:
+
+```bash
+node <skill>/scripts/check-copy.mjs pack.json --note note.md [--brand-name <name> --handle <@h>]
+```
+
+- Exit 1 → put the note's text back verbatim / remove invented copy, re-run.
+  Do not create the Run with errors. `--allow-extra '<regex>'` only for
+  layout chrome you can name in the final message.
+- Paste the script's output (the `P1 OK … check-copy: PASS` lines) in the
+  final message as the fidelity check; never summarise changes from memory.
+
+Post has primary media (`source-video.*`, `assets/*.png|jpg|webp`, screenshots
+or clips at the post root, local media named in `source.md`) → also run the
+evidence gate:
+
+```bash
+node <skill>/scripts/check-evidence.mjs pack.json --post-dir posts/<slug> [--source-media a.mp4,b.png]
+```
+
+- Exit 1 → the pack shows zero uploaded evidence: only the Brand avatar and
+  icons. Extract frames / screenshots, `images upload`, place them as
+  `<img data-type="image" src="https://…">` (step 5), re-run. Icons never
+  stand in for the media. Do not create the Run with errors.
+- `--allow-icon-only` passes with a WARN; use it only when the user said so
+  and name it in the final message.
+- Accounts / Content Engine dispatch can require this gate for every post
+  (`--require-evidence` at create).
+
 ### 7. Create and hand off
 
 ```bash
 easysociable slideshows create --file pack.json --brand-id <brandId> --json
 # no Brand: --theme theme.json instead of --brand-id
+# approved copy: add --copy-lock note.md (refuses to create if check-copy fails)
+# post with media: add --require-evidence posts/<slug> (refuses to create if check-evidence fails)
 ```
 
 Reply once with: the `studioUrl`, the arc in one line, any Brand sample
@@ -238,7 +300,7 @@ left ("The name, handle and avatar on pages 1 and 6 are samples: fill them
 once in the bar at the top of Studio, or in Brands at
 https://my.easysociable.com/brands, and every page updates"; name only the
 fields that are samples), the sources (facts and
-each evidence image: "p1 image: <url>"), and each image placeholder to replace (page + what to upload). Tell them to edit in
+each evidence image: "p1 image: <url>"), and the optional upgrades (step 5). Tell them to edit in
 Studio and click **Download** for the PNG ZIP.
 
 ### 8. Revise (same Run, never a copy)
@@ -304,7 +366,8 @@ Template steps:
    **as many times as the new content needs** (4 tips → 4 pages, 6 → 6). Drop
    roles the new content has none of.
 4. Change only text inside `data-variable` elements and send matching
-   `slots`. Too long → rewrite shorter; never resize boxes or move elements.
+   `slots`. Too long → rewrite shorter (only copy you wrote; approved copy →
+   smaller type or taller box instead); otherwise never resize or move elements.
    Every source image is replaced for the new topic (step 5 order);
    Brand avatar/logo stay.
 5. Step 6 check, then create (step 7). In the reply, say in one line what
