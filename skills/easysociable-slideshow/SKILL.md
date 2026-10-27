@@ -53,7 +53,7 @@ Read results from these paths; don't guess:
 | `formulas recommend` | `data.cards[]` (`id`, `status`, `recipe`, `swipe`), `data.stop` |
 | `formulas get` | `data` (`beats[]`, `looks[].layouts`) |
 | `templates references` | a top-level array (`familyId`, `name`, `roles`, `style`, `requiresImage`) |
-| `templates source` | top level: `familyId`, `canvas`, `studioJson` |
+| `templates source` | top level: `familyId`, `canvas`, `studioJson`; several `--family a,b,c` → an array in that order |
 | `icons search --query <word>` | icon list for the word (ids, no SVG) |
 | `icons get --id <id> --idempotency-key <any-unique-string>` | `canonicalSvg` to inline |
 | `images upload --path …` | `data[]` (`path`, `asset.url`, or `error`); exit 1 if any failed |
@@ -194,8 +194,9 @@ without a photo (references/REFERENCES.md, "A reference's image area"). Decide
 each page's image (step 5) while you pick its reference: a diagram needs the
 image area, a large evidence image needs a large one.
 `--no-image` is for when you specifically want designs drawn with type alone.
-Read each chosen design with `easysociable templates source --family <familyId> --json`
-and adapt it as in `references/REFERENCES.md` ("Adapting a reference" and
+Pick every page's design first, then read them all in one call:
+`easysociable templates source --family <familyId>,<familyId>,… --json`
+(one per page, same order). Adapt each as in `references/REFERENCES.md` ("Adapting a reference" and
 "Avoid"). Put the result in the pack as a generated page:
 
 ```json

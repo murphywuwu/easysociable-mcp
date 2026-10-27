@@ -10,7 +10,7 @@ Find references for a page role, shuffled, as short summaries:
 
 ```bash
 easysociable templates references --role hook,cover [--style <style>] [--exclude <familyIds>] [--no-image] --json
-easysociable templates source --family <familyId> --json   # the design's Studio source
+easysociable templates source --family <familyId>[,<familyId>…] --json   # the designs' Studio source (several → array)
 ```
 
 Roles overlap in the catalog, so pass related ones together: `hook,cover` ·
