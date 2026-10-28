@@ -107,8 +107,8 @@ Your Agent will:
 1. Call `list_brands` to load your saved Brand (name, handle, colors, fonts).
 2. Pick a proven structure from the [Formula](https://easysociable.com/formulas) catalog (page 1 is its opening hook), then draft the copy.
 3. Call `list_templates` to choose a layout for each page.
-4. Call `create_slideshow_run` to bind copy, layouts and Brand into a Slideshow Run.
-5. Return a private Studio link for you to polish and download the finished PNG pack.
+4. Call `create_slideshow_run` to bind copy, layouts and Brand into a Slideshow Run, with the post's title and caption drafted to the platform's limits.
+5. Return a private Studio link: polish the pages, then on your phone tap **Publish** to share every page to the app with the caption copied, or download the PNG pack.
 
 ---
 
