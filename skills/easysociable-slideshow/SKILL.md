@@ -289,6 +289,31 @@ node <skill>/scripts/check-evidence.mjs pack.json --post-dir posts/<slug> [--sou
 
 ### 7. Create and hand off
 
+Write the post's text beside the images into the pack as `post`. The user
+publishes from their phone: Studio's **Publish** copies this text and shares
+the pages to the app in one tap, so a good draft is most of their work.
+
+```json
+{ "schemaVersion": "content-pack.v1", "platform": "xiaohongshu", "title": "…",
+  "post": { "title": "…", "description": "…" }, "pages": [ … ] }
+```
+
+| Platform | Fields | Limits |
+|---|---|---|
+| xiaohongshu | `title` + `description` | 20 / 1000 |
+| tiktok | `title` + `description` | 90 / 4000 |
+| instagram | `description` (caption) | 2200 |
+| threads | `description` | 500 |
+| linkedin | `description` | 3000 |
+
+- Same language, facts and voice as the pages; never a fact the pages and
+  knowledge don't have. No title field → no `title`.
+- `title`: the hook in the platform's words, not the Run title. `description`:
+  what the pages give, in a few short lines, then 3–8 `#hashtags` on the last
+  line (Xiaohongshu, Instagram, TikTok, Threads; LinkedIn 0–3).
+- Stay under the limits: Studio blocks Share over them. The Run returns them
+  as `postLimits`.
+
 ```bash
 easysociable slideshows create --file pack.json --brand-id <brandId> --json
 # no Brand: --theme theme.json instead of --brand-id
@@ -302,7 +327,8 @@ once in the bar at the top of Studio, or in Brands at
 https://my.easysociable.com/brands, and every page updates"; name only the
 fields that are samples), the sources (facts and
 each evidence image: "p1 image: <url>"), and the optional upgrades (step 5). Tell them to edit in
-Studio and click **Download** for the PNG ZIP.
+Studio, then on their phone tap **Publish** → **Share to <platform>**: the
+pages go to the app and the text is copied, so they paste once.
 
 ### 8. Revise (same Run, never a copy)
 
@@ -322,7 +348,9 @@ Feedback on an existing Run ("page 3 looks off", "shorter hook") edits that Run.
    easysociable slideshows update --id <runId> --file patch.json --json
    ```
    `slots` replaces the page's slots, so send the full set for that page.
-   Unlisted pages stay untouched.
+   Unlisted pages stay untouched. Feedback on the post text ("shorter caption")
+   → `{ "post": { "title": "…", "description": "…" } }` in the same patch
+   (it replaces both fields; keep the one not asked about).
 4. `RUN_REVISION_CONFLICT` → the user saved in Studio meanwhile: `get` again,
    re-apply your change on top, retry once.
 5. "Go back to the previous version" → take those pages' `layout` / `slots`
