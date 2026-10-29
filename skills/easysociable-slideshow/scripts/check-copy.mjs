@@ -28,8 +28,19 @@ function parseNote(text, section) {
   for (const raw of [lines[start].trim().slice(section.length + 2), ...lines.slice(start + 1)]) {
     let line = raw.trim()
     if (line.startsWith('【')) break
+    // C-15: strip markdown bullet / bold markers before the 'Pn' heading test.
+    line = line.replace(/^[-*]\s+/, '').replace(/\*\*/g, '')
     const head = line.match(/^P(\d+)\b\s*/i)
-    if (head) { cur = pages[Number(head[1]) - 1] = { lines: [], segments: [] }; line = line.slice(head[0].length) }
+    if (head) {
+      cur = pages[Number(head[1]) - 1] = { lines: [], segments: [] }
+      const rest = line.slice(head[0].length)
+      // C-15: remaining text is editor page title (skip) unless it starts with a known copy label
+      // (legacy "P3 小字：xxx" must still count as copy — do not blind-continue).
+      if (rest && !/^(大字|小字|做什么|为什么|新手提醒|适合谁|资料去处)\s*[:：]/.test(rest)) continue
+      line = rest
+    }
+    // C-15: bare editor label line ('文案：' / '文字：' / '内容：') is not copy.
+    if (/^(文案|文字|内容)\s*[:：]\s*$/.test(line)) continue
     if (!cur || !line || /作用\s*[:：]/.test(line)) continue
     line = line.replace(/^(大字|小字|做什么|为什么|新手提醒|适合谁|资料去处)\s*[:：]\s*/, '')
     cur.lines.push(line)

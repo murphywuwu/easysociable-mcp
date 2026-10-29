@@ -69,14 +69,17 @@ const parse = s => { const m = s.match(/rgba?\(([^)]+)\)/); if (!m) return null;
 const ratio = (a, b) => { const [x,y] = [lum(a), lum(b)].sort((m,n) => n - m); return (x + 0.05) / (y + 0.05) }
 function measure(root) {
   const R = root.getBoundingClientRect(), W = R.width, H = R.height, k = W / 1080
-  const errors = [], warnings = []
+  const errors = [], warnings = [], hints = []
   const texts = [...root.querySelectorAll('[data-variable^="text"], p, h1, h2, h3')].filter((e, i, all) => e.textContent.trim() && !all.some(o => o !== e && o.contains(e)))
   const label = e => (e.dataset.variable ? e.dataset.variable + ' ' : '') + JSON.stringify(e.textContent.trim().slice(0, 40))
   let words = 0
   for (const e of texts) {
     const cs = getComputedStyle(e), r = e.getBoundingClientRect(), size = parseFloat(cs.fontSize), n = e.textContent.trim().split(/\s+/).length
     if (e.dataset.type !== 'decoration' && e.dataset.type !== 'label') words += n
-    if (e.scrollHeight > e.clientHeight + 2 || e.scrollWidth > e.clientWidth + 2) errors.push('overflow: ' + label(e) + ' needs ' + e.scrollWidth + 'x' + e.scrollHeight + ', box ' + e.clientWidth + 'x' + e.clientHeight)
+    const overflowH = e.scrollHeight > e.clientHeight + 2, overflowW = e.scrollWidth > e.clientWidth + 2
+    if (overflowH || overflowW) errors.push('overflow: ' + label(e) + ' needs ' + e.scrollWidth + 'x' + e.scrollHeight + ', box ' + e.clientWidth + 'x' + e.clientHeight)
+    // P2-2: actionable min height = Chrome scrollHeight (same truth as overflow need). Always emit for text boxes so builder can size once.
+    if (e.clientHeight > 0) hints.push({ label: label(e).trim(), suggestedMinHeight: e.scrollHeight, currentHeight: e.clientHeight, overflow: overflowH })
     if (r.left < R.left - 2 || r.top < R.top - 2 || r.right > R.right + 2 || r.bottom > R.bottom + 2) errors.push('off-canvas: ' + label(e))
     if (n >= 6 && size < 28 * k) warnings.push('small text (' + size + 'px, min ' + Math.round(28 * k) + '): ' + label(e))
     // Contrast: the element and each coloured span against the first opaque background under its centre.
@@ -103,10 +106,10 @@ function measure(root) {
   for (const [t, b] of spans) { gap = Math.max(gap, t - cursor); cursor = Math.max(cursor, b) }
   gap = Math.max(gap, H - cursor)
   if (gap > 0.25 * H) warnings.push('empty band ' + Math.round(gap) + 'px (' + Math.round(100 * gap / H) + '% of height): rebalance the layout')
-  return { errors, warnings }
+  return { errors, warnings, hints }
 }
 if (!GRID) document.fonts.ready.then(() => {
-  document.getElementById('report').textContent = JSON.stringify([...stage.children].map(box => { try { return measure(box.firstElementChild) } catch (e) { return { errors: ['render failed: ' + e.message], warnings: [] } } }))
+  document.getElementById('report').textContent = JSON.stringify([...stage.children].map(box => { try { return measure(box.firstElementChild) } catch (e) { return { errors: ['render failed: ' + e.message], warnings: [], hints: [] } } }))
 })
 `
 
@@ -126,7 +129,7 @@ const dom = execFileSync(chrome, [...base, `--window-size=${W},${Hs.reduce((a, b
 const rows = Math.ceil(pages.length / COLS)
 execFileSync(chrome, [...base, `--window-size=${Math.min(COLS, pages.length) * (W / 2 + 16) + 16},${rows * (Math.max(...Hs) / 2 + 16) + 16}`, `--screenshot=${join(outDir, 'grid.png')}`, pathToFileURL(file).href + '#grid'], { stdio: 'ignore' })
 const raw = dom.match(/<pre id="report">([\s\S]*?)<\/pre>/)?.[1]?.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
-const reports = raw ? JSON.parse(raw) : pages.map(() => ({ errors: ['no report (page script did not finish)'], warnings: [] }))
+const reports = raw ? JSON.parse(raw) : pages.map(() => ({ errors: ['no report (page script did not finish)'], warnings: [], hints: [] }))
 // Every Run carries the Brand: a cover signature and a CTA handle (references/REFERENCES.md rule 5).
 const brandSpots = { 0: ['name', 'handle', 'avatar'], [pages.length - 1]: ['handle', 'avatar'] }
 let failed = false
@@ -138,6 +141,12 @@ for (const [i, page] of pages.entries()) {
   console.log(`page ${page.n} (${page.role}): ${report.errors.length ? 'FAIL' : 'ok'}`)
   for (const e of report.errors) console.log(`  ERROR ${e}`)
   for (const w of report.warnings) console.log(`  warn  ${w}`)
+  // P2-2: per-page suggested min heights (Chrome scrollHeight). Overflow rows first, then others.
+  const hints = report.hints || []
+  const ordered = [...hints.filter(h => h.overflow), ...hints.filter(h => !h.overflow)]
+  for (const h of ordered) {
+    console.log(`  hint  建议最小高度: ${h.label} → ${h.suggestedMinHeight}px（当前框 ${h.currentHeight}px）${h.overflow ? ' · overflow' : ''}`)
+  }
 }
 console.log(`contact sheet: ${join(outDir, 'grid.png')} — look at it before creating the Run.`)
 process.exit(failed ? 1 : 0)
