@@ -1,11 +1,12 @@
 # ContentPack v1
 
-A page is **generated**: `layout: { studioJson, canvas }` adapted from a
-reference design (see `REFERENCES.md`). Catalog pages (`layoutFamilyId` /
-`pageTemplateId`) are legacy; do not create new Runs with them. `role` is a weak tag from the closed enum, not a
-sequence position. `slots` are public values only. Do not add a
-`deck_template_id`, `bindingMap`, AST, ContentDocument, or product `arc` /
-`pageSequence`.
+A page is **generated**: `layout: { studioJson, canvas }` composed from the
+internal visual system. Catalog pages (`layoutFamilyId` / `pageTemplateId`) are
+legacy compatibility fields; do not create new Runs with them unless the user
+explicitly asks to reuse an existing Run or legacy handoff. `role` is a weak
+production hint, not a sequence position or content formula. `slots` are
+public values only. Do not add a `deck_template_id`, `bindingMap`, AST,
+ContentDocument, or product `arc` / `pageSequence`.
 
 Generated page:
 
@@ -15,9 +16,7 @@ Generated page:
               "canvas": { "width": 1080, "height": 1350 } } }
 ```
 
-## Example: cost → mechanism (TikTok)
-
-Opening beat is cost; page 1 is still a hook-class template.
+## Example: generated pages (TikTok)
 
 ```json
 {
@@ -25,29 +24,15 @@ Opening beat is cost; page 1 is still a hook-class template.
   "platform": "tiktok",
   "title": "Stop briefing a blank canvas",
   "pages": [
-    { "role": "hook", "layoutFamilyId": "fam_hook_001", "slots": { "text_0": "You finish the copy. Then you start over.", "text_1": "The design file kept none of the argument." } },
-    { "role": "point", "layoutFamilyId": "fam_stack_001", "slots": { "text_0": "Roles, Brand, Layouts persist" } },
-    { "role": "steps", "layoutFamilyId": "fam_stair_001", "slots": { "text_0": "Use them in that order" } },
-    { "role": "cta", "layoutFamilyId": "fam_close_001", "slots": { "text_0": "Don't brief a blank canvas" } }
+    { "role": "hook", "slots": { "text_0": "You finish the copy. Then you start over." }, "layout": { "studioJson": "<div id=\"Graphic\" data-type=\"post\">…</div>", "canvas": { "width": 1080, "height": 1350 } } },
+    { "role": "point", "slots": { "text_0": "Roles, Brand, Layouts persist" }, "layout": { "studioJson": "<div id=\"Graphic\" data-type=\"post\">…</div>", "canvas": { "width": 1080, "height": 1350 } } },
+    { "role": "steps", "slots": { "text_0": "Use them in that order" }, "layout": { "studioJson": "<div id=\"Graphic\" data-type=\"post\">…</div>", "canvas": { "width": 1080, "height": 1350 } } },
+    { "role": "cta", "slots": { "text_0": "Don't brief a blank canvas" }, "layout": { "studioJson": "<div id=\"Graphic\" data-type=\"post\">…</div>", "canvas": { "width": 1080, "height": 1350 } } }
   ]
 }
 ```
 
-## Example: hook → value → cta
-
-```json
-{
-  "schemaVersion": "content-pack.v1",
-  "platform": "tiktok",
-  "title": "A repeatable story",
-  "pages": [
-    { "role": "hook", "pageTemplateId": "tpl_hook_001", "slots": { "text_0": "The hook", "text_1": "The point" } },
-    { "role": "value", "pageTemplateId": "tpl_value_001", "slots": { "text_0": "One idea" } },
-    { "role": "cta", "pageTemplateId": "tpl_cta_001", "slots": { "text_0": "Follow for more" } }
-  ]
-}
-```
-
-The renderer accepts any supported page count within the platform cap. A newly
-published Layout Family can be selected in a new Run without creating a
-carousel asset.
+The renderer accepts any supported page count within the platform cap. X image
+Runs support 2–20 pages and default to the Instagram-compatible `4:5` canvas
+(1080×1350); keep every page in the Run on that same canvas. A newly published
+Layout Family can be selected in a new Run without creating a carousel asset.

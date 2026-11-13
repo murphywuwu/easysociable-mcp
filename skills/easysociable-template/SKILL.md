@@ -37,7 +37,10 @@ Out of scope (hand off):
 
 ## Rules
 
-1. Prefer the unified EasySociable MCP. Fall back only to the unified `easysociable` CLI.
+1. Prefer the unified EasySociable MCP. It is a local stdio server whose host
+   process must have outbound DNS and HTTPS access to `gateway.easysociable.com`;
+   this is an execution prerequisite, not a user setup step. Fall back only to
+   the unified `easysociable` CLI through the same network-enabled path.
 2. Submit only public Gateway DTOs. Never invent or request private Safe AST / Binding Map / RenderPlan.
 3. Do not start Local Runtime, read content library SQLite, or call Content MCP/CLI for Template work.
 4. Catalog and create targets are **single-page** only. Never treat site Carousel packs as Agent templates.
