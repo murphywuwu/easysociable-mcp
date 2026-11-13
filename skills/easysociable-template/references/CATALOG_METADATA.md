@@ -30,7 +30,7 @@ Multi-select. Use `x` for X/Twitter. See **exact recommended pixels** in `refere
 3:4 | 4:5 | 9:16 | 16:9 | 1:1 | 21:9 | custom
 ```
 
-Always also store exact `canvas: { width, height }`. Use `16:9` for X **1200×675** in-stream; use `custom` for non-standard boards like link cards **1200×628**. Prefer the platform **Recommended** row in `PLATFORM_SPECS.md`.
+Always also store exact `canvas: { width, height }`. For X multi-image layouts, use the default `4:5` canvas **1080×1350**; use `16:9` / **1200×675** only for an explicitly wide in-stream card, and `custom` for non-standard boards like link cards **1200×628**. Prefer the platform **Recommended** row in `PLATFORM_SPECS.md`.
 
 ### Page roles (`supportedRoles` / pageRoles) — pick 1–2
 

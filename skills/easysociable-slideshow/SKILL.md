@@ -1,20 +1,22 @@
 ---
 name: easysociable-slideshow
 description: >
-  Turn a topic into an editable, ready-to-post carousel (Slideshow Run) in
-  EasySociable Studio. Research facts, pick a proven structure (Formula),
-  lay pages out from reference designs (the user's, a Formula's,
-  or the catalog's, shuffled), render-check every page locally, then create the Run and hand the user a Studio link.
+  Turn page-by-page carousel copy into an editable, ready-to-post Slideshow Run
+  in EasySociable Studio. Preserve approved copy, generate layouts from the
+  internal design system, render-check every page locally, then create the Run
+  and hand the user a Studio link. Accept topic-only input only when the Content
+  Skill has already produced the page copy.
   Never block on a question: a missing Brand shows as a bound sample the user
   fills once in Studio. Final pixels come only from Studio Download.
 ---
 
 # EasySociable Slideshow Skill
 
-The user gives a topic. You return a Studio link to a carousel that is good
-enough to post, where every word is still editable. The output is editable,
-so **a wrong guess is cheap and a question is expensive**: decide platform,
-page count, arc, style and copy yourself; the user fixes details in Studio.
+The Content Skill owns content. This skill receives page-by-page copy and
+returns a Studio link to a carousel that is good enough to post, where every
+word is still editable. The output is editable, so **a wrong visual guess is
+cheap and a question is expensive**: decide platform, page count, visual
+language and layout yourself; the user fixes details in Studio.
 Approved copy is the exception: when it is supplied, it is final (below).
 
 What only the user has never blocks the Run; it becomes a visible, replaceable
@@ -42,18 +44,36 @@ script, "use this text", a `note.md` with locked copy), that text is **final**:
   concerns" in the final message; never rewrite it.
 - Gate: `scripts/check-copy.mjs` in step 6, `--copy-lock` in step 7.
 
+## Input boundary
+
+Route before designing:
+
+1. **Page-by-page copy** — preserve it verbatim and go straight to layout.
+2. **Long-form copy** — do not invent a Formula or restructure the argument
+   here. Return to `easysociable-content` and compile it into page-by-page copy,
+   then continue here.
+3. **Topic only** — return to `easysociable-content` for the fallback writer;
+   this skill must not generate the content itself.
+
+Formula selection is not part of this skill. A Formula may be used only when
+the user explicitly asks for a legacy Content Engine Topic or names one. A
+user's Writing Skill, approved copy and original order always win.
+
+For generated pages, read
+[references/DISTILLED_DESIGN_SYSTEM.md](references/DISTILLED_DESIGN_SYSTEM.md).
+It is the distilled visual knowledge from the Template catalog, not a list of
+templates to select.
+
 ## Command output (`--json`)
 
 Read results from these paths; don't guess:
 
 | Command | Result |
 |---|---|
-| `auth status` | `authenticated`, `account.email` (no `data` wrapper) |
+| `auth status` | `authenticated`, `status`, `account.email` (no `data` wrapper) |
 | `brands list` / `brands get` | `data[]` / `data` (`id`, `name`, `handle`, `colors`, `logoUrl`) |
-| `formulas recommend` | `data.cards[]` (`id`, `status`, `recipe`, `swipe`), `data.stop` |
-| `formulas get` | `data` (`beats[]`, `looks[].layouts`) |
-| `templates references` | a top-level array (`familyId`, `name`, `roles`, `style`, `requiresImage`) |
-| `templates source` | top level: `familyId`, `canvas`, `studioJson`; several `--family a,b,c` → an array in that order |
+| `formulas recommend` / `formulas get` | legacy Content Engine handoff only; never required for user-first copy |
+| `templates references` / `templates source` | legacy catalog compatibility or explicit reuse only; new pages use generated layouts |
 | `icons search --query <word>` | icon list for the word (ids, no SVG) |
 | `icons get --id <id> --idempotency-key <any-unique-string>` | `canonicalSvg` to inline |
 | `images upload --path …` | `data[]` (`path`, `asset.url`, or `error`); exit 1 if any failed |
@@ -65,9 +85,19 @@ Read results from these paths; don't guess:
 
 `easysociable auth status --json`.
 
-- `authenticated: false` → stop; ask the user to run `easysociable auth login`
-  (one browser approval covers CLI and Studio). Draft nothing while logged out.
-- `authenticated: true` → say once: "This Run will be created as
+EasySociable's unified MCP is a local stdio server launched by the host. It
+calls `gateway.easysociable.com` itself, so the MCP host process must have
+outbound DNS and HTTPS access. Prefer the unified MCP for Gateway operations;
+when the CLI is needed, run it through the same network-enabled execution path.
+This is an execution prerequisite, not a user setup step.
+
+- `status: unauthenticated` / `authenticated: false` → stop; ask the user to run
+  `easysociable auth login` (one browser approval covers CLI and Studio). Draft
+  nothing while logged out.
+- `status: network_error` / `authenticated: null` → do not ask the user to
+  re-authorize and do not draft a Run; report that Gateway connectivity is
+  unavailable and retry when the network is available.
+- `status: authenticated` / `authenticated: true` → say once: "This Run will be created as
   `<account.email>` — open Studio with the same account."
 
 ### 1. Brand (never ask)
@@ -135,69 +165,47 @@ verbatim (copy-lock, above); evidence images are still searched as above.
 
 ### 3. Structure and hook
 
-Formulas are hosted cards distilled from real viral posts, with evidence
-pooled across niches (a structure works by its mechanism, not its niche).
-Use a card when it fits; otherwise write your own. Never force one.
+This step is only for legacy Topic handoff. In the normal user-first flow, the
+Content Skill has already produced the page sequence and this skill must not
+rewrite it. A long-form compiler's page order is the content's order, not a
+Formula to be replaced.
 
-- Decide the content's **shape** from your facts: N tips → `tip-list`, a
-  procedure → `steps`, a transformation → `before-after`, errors →
-  `mistake-list`, a single piece of news or a claim → no list recipe.
-- **Always** look for a structure first:
-  `easysociable formulas recommend [--recipe <recipe>] --platform <p> --fact-count <n> --json`
-  (`--recipe` when the shape is a list recipe; without it you see every
-  structure and judge fit yourself). Near-equal cards come back shuffled.
-  When the user asked for something different from last time, add
-  `--exclude <formulaId>` for the Formula that Run used.
-- Use a card only if `stop` is false **and** it fits this content (a news
-  explainer is not an "N things" list). Prefer `published`; a `hypothesis`
-  card is thin evidence: use it only when it clearly fits.
-- Formula: its `swipe` is the page order and each `beat.fill` guides the copy.
-  Page 1 is its `hook` beat: write the opening line from that beat's `fill`.
-- No fitting card → write the hook and arc yourself (`references/ARC.md`):
-  draft 3 hooks of different types, keep the most specific one the carousel
-  fully pays off.
-- Platform: what the user said, else the one their Brand/history uses, else
-  Instagram 4:5. Page count follows the argument (usually 6–9), within
-  `references/PLATFORM_CAPS.md`.
-- One idea per page, ≤ 45 words per page. Page 1 is the hook. Last page asks
-  for one action (comment, save or follow). Approved copy → skip this step's
-  copy writing; the note's pages are the arc (copy-lock).
+- For an explicit legacy Formula request, read its beats only as content
+  metadata and preserve the requested handoff. Do not call Formula
+  recommendation for user-provided copy.
+- Platform is what the user said, else the one their Brand/history uses, else
+  Instagram 4:5. X multi-image Runs default to the same Instagram-compatible
+  4:5 canvas (1080×1350), with 2–20 pages. For approved copy, page count
+  follows the supplied pages; do not merge pages to fit a preferred count.
+- For generated topic copy, the Content Skill owns the page count and content
+  rhythm. This skill may report a layout issue, but must not silently rewrite
+  the words to solve it.
 
 ### 4. Look and pages
 
-Structure (step 3) and look are chosen separately. The look comes from a
-**reference**; the first rule that applies wins:
+The look is generated from the internal visual system. Templates are not a
+user-facing selection step and new pages should not depend on a catalog
+`pageTemplateId` or `layoutFamilyId`:
 
 1. The user names a Run or says "same as last time / like this one" →
    "Reuse a Run" below.
 2. The user shares a post (screenshot or link) → study its grid, type scale,
-   background, density and decoration; take the closest catalog references as
-   structure and restyle them to match the post. Never copy its words or images.
-3. A Formula with a Look → the Look's designs (Formula handoff below).
-4. The user asks for a different look ("换个样子", "something else") → first
+   background, density and decoration; translate those observations into the
+   internal design system. Never copy its words or images, and do not require a
+   catalog reference to reproduce the visual language.
+3. The user asks for a different look ("换个样子", "something else") → first
    write 3–5 art directions that differ from each other and from this Brand's
    previous Run (one line each: grid, type treatment, background, density,
-   decoration). Drop any the previous Run used, take the least conventional
-   one, and pick references whose `style` fits it.
-5. Otherwise → the content decides: get candidates for the cover with
-   `easysociable templates references --role hook,cover --json`
-   (results are shuffled) and take the first that fits the content. Its
-   `style` is the deck's style; for each other page ask for that page's roles
-   with `--style <style>`. A number → `metric,proof`; a list item →
-   `point,value,steps`; a comparison → `compare`; a page with an evidence
-   image (step 2) or a real product → `screenshot`. No match in that style →
-   any style, keeping the cover's chrome.
+   decoration). Drop any the previous Run used and take the least conventional
+   one that still keeps the content readable.
+4. Otherwise → let the content decide. Choose a visual language, then compose
+   each page from layout primitives (text stack, split, proof, comparison,
+   steps, image focus, quote, metric and close). Keep one focal point per page,
+   vary adjacent pages, and preserve a coherent deck-level system.
 
-Don't filter out references that need an image just because you have none:
-most covers in the library have an image area. Use one and fill that area
-without a photo (references/REFERENCES.md, "A reference's image area"). Decide
-each page's image (step 5) while you pick its reference: a diagram needs the
-image area, a large evidence image needs a large one.
-`--no-image` is for when you specifically want designs drawn with type alone.
-Pick every page's design first, then read them all in one call:
-`easysociable templates source --family <familyId>,<familyId>,… --json`
-(one per page, same order). Adapt each as in `references/REFERENCES.md` ("Adapting a reference" and
-"Avoid"). Put the result in the pack as a generated page:
+Use the internal design grammar and Studio source primitives to create each
+page. Choose an image area only when the page's content benefits from one; a
+text-only page is valid. Put the result in the pack as a generated page:
 
 ```json
 { "role": "hook", "slots": { "text_0": "…", "text_1": "…" },
@@ -305,6 +313,7 @@ the pages to the app in one tap, so a good draft is most of their work.
 | instagram | `description` (caption) | 2200 |
 | threads | `description` | 500 |
 | linkedin | `description` | 3000 |
+| x | `description` (post text) | platform-aware; keep within the current X composer limit |
 
 - Same language, facts and voice as the pages; never a fact the pages and
   knowledge don't have. No title field → no `title`.
@@ -361,7 +370,7 @@ Feedback on an existing Run ("page 3 looks off", "shorter hook") edits that Run.
 Same `studioUrl`; tell the user to reload Studio. A new Run only for a
 different topic, or when the user asks for an alternative version to compare.
 
-## Formula handoff (prompt names `Formula: F-…`)
+## Legacy Formula handoff (only when explicitly requested)
 
 `easysociable formulas get --id <id> --json`. Its `beats` are the pages (same
 order and roles); `title_template` with `{X}` = the topic is the arc. Write copy
@@ -372,20 +381,20 @@ read it with `templates source --family` and adapt it as in step 4. The Look
 wins over rule 5 of step 4 but not over a Run or post the user named.
 Then continue at step 5.
 
-## Reuse a Run (prompt names a `run_…` for a new topic)
+## Reuse a Run's visual language (prompt names a `run_…` for a new topic)
 
 A new topic → a **new** Run; the source Run is never changed. Never ask which
 mode; decide from the words and the content:
 
-- **Template** — "using run_x as the template", "same as last time", "like
+- **Reuse** — "using run_x as the template", "same as last time", "like
   this one" (last time = the newest Run of this Brand, `slideshows list`).
-  Keep every page's look: only slot content changes.
-- **Style** — "in the style / feel / vibe of run_x", or Template was asked but
+  Keep the visual language; do not expose or require a catalog Template ID.
+- **Style** — "in the style / feel / vibe of run_x", or reuse was asked but
   the new content does not fit its page roles (a "N tips" Run for an "A vs B"
   topic). Take its colours, type treatment, chrome and spacing; lay pages out
   fresh in step 4.
 
-Template steps:
+Reuse steps:
 
 1. `easysociable slideshows get --id <runId> --json`. Its pages' `role`,
    `layout` and `slots` are the source (they include the user's Studio edits).
@@ -413,11 +422,11 @@ Template steps:
 3. Revisions edit the same Run page by page (step 8): layout, text and images
    can all change. Page count and order are fixed for now (no add, delete,
    reorder) — if the user needs that, say so; create a new Run only when they agree.
-4. Every plan: up to 20 pages. Free: 3 Downloads per month and 1 Brand; Creator: unlimited, 3 Brands; Studio: unlimited, 25 Brands. `BRAND_LIMIT_REACHED` → tell the user their plan's limit and the suggested action; never create a Run without the Brand silently.
+4. Every plan: up to the platform maximum. X and Instagram: 20 pages; X defaults to 4:5 / 1080×1350. Free: 3 Downloads per month and 1 Brand; Creator: unlimited, 3 Brands; Studio: unlimited, 25 Brands. `BRAND_LIMIT_REACHED` → tell the user their plan's limit and the suggested action; never create a Run without the Brand silently.
 5. Identity: create with the user's own login, not `workspace_local` /
    `test-key` (unless they asked for `--allow-local-fixture`). Studio says
    "belongs to another account" → recreate with the current login.
-6. Content Engine runs keep their knowledge gate:
+6. Explicit Content Engine runs keep their knowledge gate:
    `easysociable engine validate --run <run-dir> --require-knowledge`.
    Topic-only requests (no Content Engine) use researched, sourced facts.
 
@@ -432,6 +441,8 @@ Template steps:
 
 ## Handoff boundary
 
-The Content Engine owns knowledge pages and Formula research. Reference
-designs are authored internally (Template skill); this skill only reads them. This skill turns a topic into a Run
-and opens Studio.
+The Content Engine optionally owns knowledge pages and legacy Formula research.
+The Content Skill owns content generation or long-form compilation. This skill
+owns visual composition, generates layouts from the internal design system, and
+opens Studio. Catalog designs remain compatibility/evaluation material and are
+not required for a new Run.

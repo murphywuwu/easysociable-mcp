@@ -8,7 +8,7 @@ The Run validates only the actual `content-pack.v1.pages.length`. There is no
 | tiktok | 4 | 35 | 9:16 · 1080×1920 |
 | instagram | 2 | 20 | 4:5 · 1080×1350 |
 | linkedin | 2 | 300 | 1:1 · 1080×1080 |
-| x | 2 | 4 | platform-specific X organic image size |
+| x | 2 | 20 | 4:5 · 1080×1350 (Instagram-compatible default) |
 | xiaohongshu | 2 | 18 | 3:4 · 1080×1440 |
 | threads | 2 | 20 | 4:5 · 1080×1350 |
 

@@ -71,13 +71,13 @@ Aligned with Meta/IG feed conventions:
 
 | Use | Preset | Pixels | Notes |
 |---|---|---|---|
-| **Single in-stream（推荐）** | ~`16:9` → use `custom` or map to wide | **1200×675** | Timeline-friendly; less aggressive crop |
+| **Multi-image post（推荐）** | `4:5` | **1080×1350** | Default to the Instagram feed canvas; keep every image in the set identical |
 | Square | `1:1` | 1200×1200 or 1080×1080 | Good for multi-image / quotes |
-| Tall | `4:5` | 1080×1350 | Often cropped toward landscape in timeline |
+| Wide single-card | `16:9` | 1200×675 | Use only when the user explicitly asks for a wide in-stream card |
 | Link / card style | custom | 1200×628 (~1.91:1) | Summary large image cards |
-| Multi-image | often `1:1` or `16:9` | keep set consistent | Up to 4 images per post |
+| Multi-image | `4:5` by default | 1080×1350 | Up to **20 images per post**; all pages must use one identical canvas |
 
-**Default for X single-card templates:** **1200×675** (`canvasPreset: custom` with note `x_instream_16x9`, or document as wide). Prefer landscape text layouts; center critical content.
+**Default for X carousel Runs:** **1080×1350** (`canvasPreset: 4:5`), the same mobile-first canvas used by Instagram. Prefer readable portrait layouts and keep critical content away from the extreme edges. Do not switch to 1200×675 unless the user explicitly requests a wide X card.
 
 ### LinkedIn — `linkedin`
 
@@ -116,7 +116,7 @@ No platform chrome assumptions. Still pick a concrete preset (`1:1`, `4:5`, `3:4
 | `1:1` | 1080×1080 | linkedin, instagram/threads safe, x multi |
 | `9:16` | 1080×1920 | tiktok, IG/Threads stories-style |
 | `21:9` | 2100×900 | wechat_cover wide |
-| `custom` | explicit only | **x** 1200×675, link cards 1200×628, etc. |
+| `custom` | explicit only | X wide cards 1200×675, link cards 1200×628, etc. |
 
 ---
 
@@ -128,7 +128,7 @@ Run's platform.
 
 ## Selection rules for Agents
 
-1. Canvas = the source post's platform **Recommended** row (text brief with no post → TikTok 9:16).  
+1. Canvas = the source post's platform **Recommended** row (text brief with no post → TikTok 9:16). For X multi-image Runs, the default is the Instagram-compatible `4:5` canvas.
 2. One canvas only; no `families derive`.  
 3. Never mix presets across slides of one deck without an explicit user choice (IG/Threads/TikTok crop to first slide).  
 4. P0 `selectionMetadata` lists only platforms that match the page's `canvasPreset`.  
@@ -137,4 +137,4 @@ Run's platform.
 ## Sources (research snapshot)
 
 - Meta Instagram help: feed width ≤1080px; aspect ~1.91:1–4:5  
-- Industry 2026 guides: X 1200×675; LinkedIn 1080×1080 / 1080×1350 (+ PDF carousels); Threads ≈ IG 4:5; TikTok Photo Mode 1080×1920; 小红书 1080×1440 3:4  
+- Product requirement: X supports up to 20 images in one post; X multi-image Runs default to the Instagram-compatible `4:5` canvas. Other practical targets: X wide single-card 1200×675; LinkedIn 1080×1080 / 1080×1350 (+ PDF carousels); Threads ≈ IG 4:5; TikTok Photo Mode 1080×1920; 小红书 1080×1440 3:4
